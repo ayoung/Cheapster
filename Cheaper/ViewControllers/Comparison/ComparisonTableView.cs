@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+using Cheaper.ViewControllers.Shared;
+
+namespace Cheaper.ViewControllers.Comparison
+{
+	public class ComparisonTableView : UITableView
+	{
+		private ComparisonTableViewSource _source;
+		public event EventHandler OnEditUnit;
+		public event EventHandler OnKeyboardDone;
+		public event EventHandler OnTouchesEnded;
+		public event EventHandler OnUnitTypeChanged;
+		
+		public ComparisonTableView(RectangleF frame, UITableViewStyle style) : base(frame, style)
+		{
+			_source = new ComparisonTableViewSource(this);
+			_source.OnEditUnit += (sender, args) =>
+			{
+				OnEditUnit.Fire(this, args);
+				ResignTextFieldAsFirstResponder();
+			};
+			_source.OnKeyboardDone += (sender, args) =>
+			{
+				OnKeyboardDone.Fire(this, EventArgs.Empty);
+			};
+			Source = _source;
+			ScrollEnabled = false;
+			AllowsSelection = false;
+		}
+		
+		public void ScrollToActiveRow()
+		{
+			ScrollToRow(_source.ActiveIndexPath, UITableViewScrollPosition.Top, true);
+		}
+		
+		public override void TouchesEnded(NSSet touches, UIEvent evt)
+		{
+			OnTouchesEnded.Fire(this, EventArgs.Empty);
+		}
+		
+		public void ResignTextFieldAsFirstResponder()
+		{
+			var firstResponder = GetFirstResponder();
+			if(firstResponder != null)
+			{
+				firstResponder.ResignFirstResponder();
+			}
+		}
+		
+		public UITextField GetFirstResponder()
+		{
+			return _source.ComparisonNameText.IsFirstResponder ? _source.ComparisonNameText : null;
+		}
+		
+		public void SetUnitText(string text)
+		{
+			_source.UnitLabel.Text = text;
+		}
+		
+		public void DisableUnitTypesExcept(int unitTypeId)
+		{
+			if(unitTypeId != 1)
+			{
+				_source.UnitTypeSegmented.SetEnabled(false, 0);
+			}
+			
+			if(unitTypeId != 2)
+			{
+				_source.UnitTypeSegmented.SetEnabled(false, 1);
+			}
+
+			if(unitTypeId != 3)
+			{
+				_source.UnitTypeSegmented.SetEnabled(false, 2);
+			}
+		}
+		
+		public bool UnitHasFocus
+		{
+			get { return _source.UnitLabel.IsFirstResponder; }
+		}
+		
+		public string ComparisonName 
+		{
+			get 
+			{
+				return _source.ComparisonNameText.Text;
+			}
+			set
+			{
+				_source.ComparisonNameText.Text = value;
+			}
+		}
+		
+		public int UnitTypeId
+		{
+			get
+			{
+				return _source.UnitTypeSegmented.SelectedSegment + 1;
+			}
+			set
+			{
+				_source.UnitTypeSegmented.SelectedSegment = value - 1;
+			}
+		}
+		
+		public void FireOnUnitTypeChanged()
+		{
+			OnUnitTypeChanged.Fire(this, EventArgs.Empty);
+		}
+	}
+}
+

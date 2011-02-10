@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8EABC1FF-44A2-45C2-B244-E2DC22FEA3CC}</ProjectGuid>
+    <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Cheaper</RootNamespace>
+    <MainNibFile>MainWindow.xib</MainNibFile>
+    <AssemblyName>Cheaper</AssemblyName>
+    <MtouchMinimumOS>3.0</MtouchMinimumOS>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchI18n />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>False</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer: Andrew Young (74SJ9NHE44)</CodesignKey>
+    <MtouchDebug>True</MtouchDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>False</MtouchDebug>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Content\Database\Cheaper.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MainWindow.xib.designer.cs">
+      <DependentUpon>MainWindow.xib</DependentUpon>
+    </Compile>
+    <Compile Include="Main.cs" />
+    <Compile Include="Support\Installation.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="Data\DataService.cs" />
+    <Compile Include="Data\SqlConnection.cs" />
+    <Compile Include="TestViewController.xib.cs">
+      <DependentUpon>TestViewController.xib</DependentUpon>
+    </Compile>
+    <Compile Include="TestViewController.xib.designer.cs">
+      <DependentUpon>TestViewController.xib</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\Comparison\ComparisonLineupViewController.cs" />
+    <Compile Include="ViewControllers\HomeListViewController.cs" />
+    <Compile Include="ViewControllers\HomeListNavigationController.cs" />
+    <Compile Include="ViewControllers\Comparable\ComparableViewController.cs" />
+    <Compile Include="ViewControllers\Comparable\ComparableScrollView.cs" />
+    <Compile Include="ViewControllers\HomeTableView.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonLineupTableView.cs" />
+    <Compile Include="ViewControllers\HomeTableViewSource.cs" />
+    <Compile Include="Data\Models\ComparableModel.cs" />
+    <Compile Include="Data\Models\ComparisonModel.cs" />
+    <Compile Include="Data\Models\UnitModel.cs" />
+    <Compile Include="Data\Models\UnitTypeModel.cs" />
+    <Compile Include="ViewControllers\ComparisonTableViewCell.cs" />
+    <Compile Include="ViewControllers\Shared\ViewControllerExtensions.cs" />
+    <Compile Include="ViewControllers\Comparable\ComparableTableView.cs" />
+    <Compile Include="ViewControllers\Comparable\ComparableTableViewSource.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonLineupTableViewSource.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonLineupTableViewCell.cs" />
+    <Compile Include="ViewControllers\Shared\UnitPicker.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonTableView.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonTableViewSource.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonViewController.bk.cs" />
+    <Compile Include="ViewControllers\Comparison\ComparisonViewController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xib" />
+    <Page Include="TestViewController.xib" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties InternalTargetFrameworkVersion="IPhone" />
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="ViewControllers\" />
+    <Folder Include="Content\" />
+    <Folder Include="Content\Database\" />
+    <Folder Include="Support\" />
+    <Folder Include="Data\" />
+    <Folder Include="ViewControllers\Comparison\" />
+    <Folder Include="ViewControllers\Comparable\" />
+    <Folder Include="ViewControllers\Comparable\" />
+    <Folder Include="Data\Models\" />
+    <Folder Include="ViewControllers\Shared\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Database\Cheaper.db3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
