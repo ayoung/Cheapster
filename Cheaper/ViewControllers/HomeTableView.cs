@@ -42,6 +42,7 @@ namespace Cheaper.ViewControllers
 			Comparisons[index] = DataService.GetComparison(comparisonId);
 			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) };
 			ReloadRows(indexPaths, UITableViewRowAnimation.None);
+			SelectRow(indexPaths[0], false, UITableViewScrollPosition.None);
 		}
 		
 		private void Reset()

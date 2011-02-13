@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
+using Cheaper.ViewControllers.Shared;
 
 using Cheaper.ViewControllers.Comparison;
 
@@ -10,6 +11,7 @@ namespace Cheaper
 	public class ComparisonLineupTableViewSource : UITableViewSource
 	{
 		private ComparisonLineupTableView _tableView;
+		public event EventHandler OnComparableSelected;
 		
 		public ComparisonLineupTableViewSource(ComparisonLineupTableView tableView)
 		{
@@ -29,7 +31,7 @@ namespace Cheaper
 				var placeholderLabel = new UILabel(new RectangleF(0, 0, _tableView.Frame.Width, 20));
 				placeholderLabel.Center = new PointF(_tableView.Frame.Width / 2, placeholderCell.Frame.Height / 2);
 				placeholderLabel.Text = "Nothing here! Add a product item.";
-				placeholderLabel.Font = UIFont.FromName("Helvetica", 12);
+				placeholderLabel.Font = UIFont.FromName("Helvetica", 14);
 				placeholderLabel.TextAlignment = UITextAlignment.Center;
 				placeholderLabel.TextColor = UIColor.LightGray;
 				placeholderCell.ContentView.AddSubview(placeholderLabel);
@@ -61,6 +63,11 @@ namespace Cheaper
 			}
 			
 			return _tableView.Comparables.Count;
+		}
+		
+		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+		{
+			OnComparableSelected.Fire(this, EventArgs.Empty);
 		}
 	}
 }

@@ -44,7 +44,7 @@ namespace Cheaper.ViewControllers
 				var placeholderLabel = new UILabel(new RectangleF(0, 0, _tableView.Frame.Width, 20));
 				placeholderLabel.Center = new PointF(_tableView.Frame.Width / 2, placeholderCell.Frame.Height / 2);
 				placeholderLabel.Text = "Start by adding a new comparison";
-				placeholderLabel.Font = UIFont.FromName("Helvetica", 12);
+				placeholderLabel.Font = UIFont.FromName("Helvetica", 14);
 				placeholderLabel.TextAlignment = UITextAlignment.Center;
 				placeholderLabel.TextColor = UIColor.LightGray;
 				placeholderCell.ContentView.AddSubview(placeholderLabel);

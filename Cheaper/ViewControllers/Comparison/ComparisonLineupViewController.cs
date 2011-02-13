@@ -27,12 +27,17 @@ namespace Cheaper.ViewControllers.Comparison
 			});
 			
 			_tableView = new ComparisonLineupTableView(comparisonId, new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
+			_tableView.OnComparableSelected += (sender, args) =>
+			{
+				OnComparableSelected.Fire(this, EventArgs.Empty);
+			};
+			
 			View.AddSubview(_tableView);
 			
 			_toolbar = new UIToolbar(new RectangleF(0, View.Frame.Height - 88, View.Frame.Width, 44));
 			_toolbar.TintColor = UIColor.DarkGray;
 			var toolbarItems = new List<UIBarButtonItem>();
-			var buttonItem = new UIBarButtonItem(string.Format("Modify {0}", _comparison.Name), UIBarButtonItemStyle.Bordered, (sender, args) => 
+			var buttonItem = new UIBarButtonItem("Edit", UIBarButtonItemStyle.Bordered, (sender, args) => 
 			{ 
 				OnModify.Fire(this, new EventArgs());
 			});
@@ -42,6 +47,11 @@ namespace Cheaper.ViewControllers.Comparison
 			View.AddSubview(_toolbar);
 		}
 		
+		public void ReloadRowForComparable(int comparableId)
+		{
+			
+		}
+		
 		public void Reload()
 		{
 			// refresh comparison from DB
@@ -49,6 +59,11 @@ namespace Cheaper.ViewControllers.Comparison
 			Title = _comparison.Name;
 
 			_tableView.Reset();
+		}
+		
+		public ComparableModel GetSelectedComparable()
+		{
+			return _tableView.GetSelectedComparable();
 		}
 		
 		public int ComparisonId { get { return _comparison.Id; } }

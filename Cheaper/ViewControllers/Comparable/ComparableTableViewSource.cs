@@ -51,6 +51,12 @@ namespace Cheaper.ViewControllers.Comparable
 					AddLabel(cell, "Price");
 					PriceText = AddTextField(cell, "0.00", indexPath, () => { return QuantityText; });
 					PriceText.KeyboardType = UIKeyboardType.NumberPad;
+					var label = new UILabel(new RectangleF(0, 10, 9, 18));
+					label.TextColor = UIColor.LightGray;
+					label.Font = UIFont.FromName("Helvetica", 14);
+					label.Text = "$";
+					PriceText.LeftView = label;
+					PriceText.LeftViewMode = UITextFieldViewMode.Always;
 					break;
 				case (3):
 					AddLabel(cell, "Quantity");

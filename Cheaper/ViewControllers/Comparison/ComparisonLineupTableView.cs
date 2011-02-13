@@ -4,12 +4,14 @@ using System.Drawing;
 using MonoTouch.UIKit;
 using Cheaper.Data;
 using Cheaper.Data.Models;
+using Cheaper.ViewControllers.Shared;
 
 namespace Cheaper.ViewControllers.Comparison
 {
 	public class ComparisonLineupTableView : UITableView
 	{
 		public List<ComparableModel> Comparables { get; private set; }
+		public event EventHandler OnComparableSelected;
 		private ComparisonLineupTableViewSource _source;
 		private int _comparisonId;
 		
@@ -18,7 +20,16 @@ namespace Cheaper.ViewControllers.Comparison
 			_comparisonId = comparisonId;
 			Reset();
 			_source = new ComparisonLineupTableViewSource(this);
+			_source.OnComparableSelected += (sender, args) =>
+			{
+				OnComparableSelected.Fire(this, EventArgs.Empty);
+			};
 			Source = _source;
+		}
+		
+		public ComparableModel GetSelectedComparable()
+		{
+			return Comparables[IndexPathForSelectedRow.Row];
 		}
 		
 		public void Reset()

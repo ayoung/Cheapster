@@ -22,6 +22,12 @@ namespace Cheaper.ViewControllers.Comparable
 		private bool _keyboardVisible;
 		private static Regex _moneyRegex = new Regex(@"^\$?([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$");
 		
+		public ComparableViewController(ComparableModel comparable)
+		{
+			Comparable = comparable;
+			Initialize(comparable.ComparisonId);
+		}
+		
 		/// <summary>
 		/// Controller that adds/edits a comparable
 		/// </summary>
@@ -29,6 +35,11 @@ namespace Cheaper.ViewControllers.Comparable
 		/// The comparison that this comparable belongs to
 		/// </param>
 		public ComparableViewController(int comparisonId)
+		{
+			Initialize(comparisonId);
+		}
+		
+		private void Initialize(int comparisonId)
 		{
 			ComparisonId = comparisonId;
 			Comparison = DataService.GetComparison(comparisonId);
@@ -63,6 +74,8 @@ namespace Cheaper.ViewControllers.Comparable
 				_tableView.ResignTextFieldAsFirstResponder();
 			};
 			
+			//_tableView.Store
+			
 			View.AddSubview(_tableView);
 			
 			// add unit picker
@@ -71,6 +84,7 @@ namespace Cheaper.ViewControllers.Comparable
 			{
 				_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
 			};
+			
 			View.AddSubview(_unitPicker);
 
 			var navigationBar = new UINavigationBar(new RectangleF(0, 0, View.Frame.Width, 44));
@@ -128,18 +142,6 @@ namespace Cheaper.ViewControllers.Comparable
 		{
 			base.ViewWillAppear(animated);
 			_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
-		}
-		
-		private void SetTextFieldStyle (UITextField textField)
-		{
-			textField.BorderStyle = UITextBorderStyle.RoundedRect;
-			textField.Font = UIFont.FromName ("Helvetica", 12);
-			textField.VerticalAlignment = UIControlContentVerticalAlignment.Center;
-		}
-				
-		public override void ViewDidLoad ()
-		{
-			base.ViewDidLoad ();
 			
 			_keyboardShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.DidShowNotification, (notification) => {
 				var keyboardBounds = (NSValue)notification.UserInfo.ObjectForKey(UIKeyboard.BoundsUserInfoKey);
@@ -170,11 +172,28 @@ namespace Cheaper.ViewControllers.Comparable
 					_tableView.Frame = new RectangleF(0, 44, View.Frame.Width, _tableView.Frame.Height);
 				}, null);
 			});
+
+			if(Comparable != null)
+			{
+				_tableView.Store = Comparable.Store;
+				_tableView.Product = Comparable.Product;
+				_tableView.Quantity = Comparable.Quantity.ToString();
+				_tableView.Price = Comparable.Price.ToString();
+				_unitPicker.SetSelectedUnit(Comparable.UnitId);
+				_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
+			}
 		}
 		
-		public override void ViewDidUnload()
+		private void SetTextFieldStyle(UITextField textField)
 		{
-			base.ViewDidUnload();
+			textField.BorderStyle = UITextBorderStyle.RoundedRect;
+			textField.Font = UIFont.FromName("Helvetica", 12);
+			textField.VerticalAlignment = UIControlContentVerticalAlignment.Center;
+		}
+		
+		public override void ViewWillDisappear(bool animated)
+		{
+			base.ViewWillDisappear(animated);
 			NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardHideObserver);
 			NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardShowObserver);
 		}
@@ -182,6 +201,7 @@ namespace Cheaper.ViewControllers.Comparable
 		public int? NewComparableId { get; private set; }
 		public int ComparisonId { get; private set; }
 		public ComparisonModel Comparison { get; private set; }
+		public ComparableModel Comparable { get; private set; }
 	}
 }
 

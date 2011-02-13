@@ -49,7 +49,7 @@ namespace Cheaper.ViewControllers.Comparison
 			{
 				if(_tableView.ComparisonName == null || _tableView.ComparisonName.Trim() == string.Empty)
 				{
-					new UIAlertView("Info", "Please provide a comparison name", null, "Dismiss");
+					new UIAlertView("Warning", "Please provide a comparison name", null, "Dismiss").Show();
 					return;
 				}
 				
@@ -68,7 +68,7 @@ namespace Cheaper.ViewControllers.Comparison
 					_comparison.UnitTypeId = _tableView.UnitTypeId;
 					DataService.SaveComparison(_comparison);
 				}
-								
+
 				if(OnFinished != null) {
 					OnFinished(this, EventArgs.Empty);
 				}
@@ -76,6 +76,11 @@ namespace Cheaper.ViewControllers.Comparison
 			
 			var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (sender, args) =>
 			{
+				if(_comparison != null)
+				{
+					navigationItem.Title = _comparison.Name;
+				}
+				
 				if(OnCanceled != null) {
 					OnCanceled(this, EventArgs.Empty);
 				}
@@ -102,6 +107,14 @@ namespace Cheaper.ViewControllers.Comparison
 			{
 				_tableView.ResignTextFieldAsFirstResponder();
 			};
+			
+			if(_comparison != null)
+			{
+				_tableView.OnNameChanged += (sender, args) =>
+				{
+					navigationItem.Title = _tableView.ComparisonName;
+				};
+			}
 			
 			View.AddSubview(_tableView);
 			

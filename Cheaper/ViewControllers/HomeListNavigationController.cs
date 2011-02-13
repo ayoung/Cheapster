@@ -59,18 +59,32 @@ namespace Cheaper.ViewControllers
 					{
 						_comparisonLineupViewController.Reload();
 						DismissModalViewControllerAnimated(true);
+						_comparableViewController = null;
 					};
 					_comparableViewController.OnCanceled += (sender__, args__) =>
 					{
 						DismissModalViewControllerAnimated(true);
+						_comparableViewController = null;
 					};
-					PresentModalViewController (_comparableViewController, true);
+					PresentModalViewController(_comparableViewController, true);
 				};
 				
 				// go to edit comparable view if a comparable is selected
 				_comparisonLineupViewController.OnComparableSelected += (sender_, args_) =>
 				{
-					// todo
+					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.GetSelectedComparable());
+					_comparableViewController.OnFinished += (sender__, args__) =>
+					{
+						_comparisonLineupViewController.Reload();
+						DismissModalViewControllerAnimated(true);
+						_comparableViewController = null;
+					};
+					_comparableViewController.OnCanceled += (sender__, args__) =>
+					{
+						DismissModalViewControllerAnimated(true);
+						_comparableViewController = null;
+					};
+					PresentModalViewController(_comparableViewController, true);					
 				};
 				
 				_comparisonLineupViewController.OnModify += (sender_, args_) =>
@@ -84,7 +98,7 @@ namespace Cheaper.ViewControllers
 					_comparisonViewController.OnFinished += (sender__, args__) =>
 					{
 						_comparisonLineupViewController.Reload();
-						
+						_homeListViewController.ReloadRowForComparison(_comparisonLineupViewController.ComparisonId);
 						DismissModalViewControllerAnimated(true);
 					};
 					PresentModalViewController(_comparisonViewController, true);

@@ -103,21 +103,30 @@ namespace Cheaper.Data
 			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) =>
 			{
 				while(reader.Read()) {
-					comparables.Add(new ComparableModel() {
-						Id = reader.GetInt32(0),
-						ComparisonId = reader.GetInt32(1),
-						UnitId = reader.GetInt32(2),
-						Store = reader.GetString(3),
-						Product = reader.GetString(4),
-						Price = reader.GetDouble(5),
-						Quantity = reader.GetDouble(6)
-					});
+					comparables.Add(CreateComparable(reader));
 				}
 			});
 			
 			return comparables;
 		}
-				
+		
+		public static ComparableModel GetComparable(int id)
+		{
+			var commandText = "select Id, ComparisonId, UnitId, Store, Product, Price, Quantity from Comparable where Id=@Id;";
+			var parameters = new Dictionary<string, object>();
+			parameters.Add("@Id", id);
+			ComparableModel comparable = null;
+			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) =>
+			{
+				if(reader.Read())
+				{
+					comparable = CreateComparable(reader);
+				}
+			});
+			
+			return comparable;
+		}
+		
 		public static int SaveComparable(ComparableModel comparable)
 		{
 			var commandText = "insert into Comparable (ComparisonId, UnitId, Store, Product, Price, Quantity) values (@ComparisonId, @UnitId, @Store, @Product, @Price, @Quantity);";
@@ -135,6 +144,19 @@ namespace Cheaper.Data
 				newId = reader.Read() ? reader.GetInt32(0) : 0;
 			});
 			return newId;
+		}
+		
+		private static ComparableModel CreateComparable(SqliteDataReader reader)
+		{
+			return new ComparableModel() {
+						Id = reader.GetInt32(0),
+						ComparisonId = reader.GetInt32(1),
+						UnitId = reader.GetInt32(2),
+						Store = reader.GetString(3),
+						Product = reader.GetString(4),
+						Price = reader.GetDouble(5),
+						Quantity = reader.GetDouble(6)
+					};
 		}
 		
 		#endregion

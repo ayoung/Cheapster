@@ -11,6 +11,7 @@ namespace Cheaper.ViewControllers.Comparison
 	{
 		public event EventHandler OnEditUnit;
 		public event EventHandler OnKeyboardDone;
+		public event EventHandler OnNameChanged;
 		public UITextField ComparisonNameText { get; private set; }
 		public EventedSegmentedControl UnitTypeSegmented { get; private set; }
 		public UILabel UnitLabel { get; private set; }
@@ -48,6 +49,10 @@ namespace Cheaper.ViewControllers.Comparison
 						OnKeyboardDone.Fire(this, EventArgs.Empty);
 						return null;
 					});
+					ComparisonNameText.EditingChanged += (sender, args) =>
+					{
+						OnNameChanged.Fire(this, EventArgs.Empty);
+					};
 					ComparisonNameText.ReturnKeyType = UIReturnKeyType.Done;
 					break;
 				case (1):

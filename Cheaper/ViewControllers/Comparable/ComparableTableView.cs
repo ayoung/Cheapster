@@ -69,21 +69,25 @@ namespace Cheaper.ViewControllers.Comparable
 		public string Store 
 		{
 			get { return _tableViewSource.StoreText.Text; }
+			set { _tableViewSource.StoreText.Text = value; }
 		}
 		
 		public string Product
 		{
 			get { return _tableViewSource.ProductText.Text; }
+			set { _tableViewSource.StoreText.Text = value; }
 		}
 		
 		public string Price
 		{
 			get { return _tableViewSource.PriceText.Text; }
+			set { _tableViewSource.PriceText.Text = value; }
 		}
 		
 		public string Quantity
 		{
 			get { return _tableViewSource.QuantityText.Text; }
+			set { _tableViewSource.QuantityText.Text = value; }
 		}
 	}
 }

@@ -14,6 +14,7 @@ namespace Cheaper.ViewControllers.Comparison
 		public event EventHandler OnKeyboardDone;
 		public event EventHandler OnTouchesEnded;
 		public event EventHandler OnUnitTypeChanged;
+		public event EventHandler OnNameChanged;
 		
 		public ComparisonTableView(RectangleF frame, UITableViewStyle style) : base(frame, style)
 		{
@@ -26,6 +27,10 @@ namespace Cheaper.ViewControllers.Comparison
 			_source.OnKeyboardDone += (sender, args) =>
 			{
 				OnKeyboardDone.Fire(this, EventArgs.Empty);
+			};
+			_source.OnNameChanged += (sender, args) =>
+			{
+				OnNameChanged.Fire(this, EventArgs.Empty);
 			};
 			Source = _source;
 			ScrollEnabled = false;
