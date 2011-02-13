@@ -12,7 +12,7 @@ namespace Cheaper.ViewControllers.Comparison
 		public event EventHandler OnEditUnit;
 		public event EventHandler OnKeyboardDone;
 		public UITextField ComparisonNameText { get; private set; }
-		public UISegmentedControl UnitTypeSegmented { get; private set; }
+		public EventedSegmentedControl UnitTypeSegmented { get; private set; }
 		public UILabel UnitLabel { get; private set; }
 		private ComparisonTableView _tableView;
 		
@@ -29,6 +29,11 @@ namespace Cheaper.ViewControllers.Comparison
 		public override int RowsInSection(UITableView tableview, int section)
 		{
 			return 3;
+		}
+		
+		public override float GetHeightForFooter(UITableView tableView, int section)
+		{
+			return 24;
 		}
 		
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -49,20 +54,23 @@ namespace Cheaper.ViewControllers.Comparison
 					cell = new EventedTableViewCell();
 					AddLabel(cell, "Compare by");
 					// add segmented control
-					UnitTypeSegmented = new UISegmentedControl(new RectangleF(120, 7, 180, 30));
+					UnitTypeSegmented = new EventedSegmentedControl(new RectangleF(120, 7, 180, 30));
 					UnitTypeSegmented.ControlStyle = UISegmentedControlStyle.Bar;
 					UnitTypeSegmented.InsertSegment("Weight", 0, false);
 					UnitTypeSegmented.InsertSegment("Volume", 1, false);
 					UnitTypeSegmented.InsertSegment("Each", 2, false);
 					UnitTypeSegmented.SelectedSegment = 0;
 					
-					UnitTypeSegmented.SetEnabled(false, 0);
 					UnitTypeSegmented.ValueChanged += (sender, args) =>
+					{
+						_tableView.FireOnUnitTypeChanged();
+					};
+					
+					UnitTypeSegmented.OnTouchesEnded += (sender, args) =>
 					{
 						if(ComparisonNameText.IsFirstResponder) {
 							ComparisonNameText.ResignFirstResponder();
 						}
-						_tableView.FireOnUnitTypeChanged();
 					};
 					
 					cell.AddSubview(UnitTypeSegmented);
@@ -130,14 +138,13 @@ namespace Cheaper.ViewControllers.Comparison
 		
 		private class TextFieldDelegate : UITextFieldDelegate
 		{
-			private Func<UIResponder> _getNextResponder;
 			private UITableView _tableView;
 			private NSIndexPath _indexPath;
 			public event EventHandler OnStartedEditing;
 
 			public TextFieldDelegate(UITableView tableView, NSIndexPath indexPath, Func<UIResponder> getNextResponder)
 			{
-				_getNextResponder = getNextResponder;
+				
 				_tableView = tableView;
 				_indexPath = indexPath;
 			}
@@ -182,6 +189,22 @@ namespace Cheaper.ViewControllers.Comparison
 
 			public override void TouchesEnded(MonoTouch.Foundation.NSSet touches, UIEvent evt)
 			{
+				OnTouchesEnded.Fire(this, EventArgs.Empty);
+			}
+		}
+		
+		public class EventedSegmentedControl : UISegmentedControl
+		{
+			public event EventHandler OnTouchesEnded;
+			
+			public EventedSegmentedControl(RectangleF frame) : base(frame)
+			{
+			
+			}
+			
+			public override void TouchesEnded(NSSet touches, UIEvent evt)
+			{
+				base.TouchesEnded(touches, evt);
 				OnTouchesEnded.Fire(this, EventArgs.Empty);
 			}
 		}

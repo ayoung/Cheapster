@@ -15,10 +15,6 @@ namespace Cheaper.ViewControllers.Comparison
 		public event EventHandler OnFinished;
 		public event EventHandler OnCanceled;
 		public ComparisonTableView _tableView;
-		private bool _pickerVisible;
-		private bool _keyboardVisible;
-		private NSObject _keyboardShowObserver;
-		private NSObject _keyboardHideObserver;
 		private bool _initialized;
 		
 		public ComparisonViewController(int comparisonId)
@@ -57,12 +53,22 @@ namespace Cheaper.ViewControllers.Comparison
 					return;
 				}
 				
-				NewComparisonId = DataService.SaveComparison(new ComparisonModel() {
-					Name = _tableView.ComparisonName.Trim(),
-					UnitId = _unitPicker.SelectedUnit.Id,
-					UnitTypeId = _tableView.UnitTypeId
-				});
-				
+				if(_comparison == null)
+				{
+					NewComparisonId = DataService.SaveComparison(new ComparisonModel() {
+						Name = _tableView.ComparisonName.Trim(),
+						UnitId = _unitPicker.SelectedUnit.Id,
+						UnitTypeId = _tableView.UnitTypeId
+					});
+				}
+				else
+				{
+					_comparison.Name = _tableView.ComparisonName.Trim();
+					_comparison.UnitId = _unitPicker.SelectedUnit.Id;
+					_comparison.UnitTypeId = _tableView.UnitTypeId;
+					DataService.SaveComparison(_comparison);
+				}
+								
 				if(OnFinished != null) {
 					OnFinished(this, EventArgs.Empty);
 				}
@@ -87,40 +93,13 @@ namespace Cheaper.ViewControllers.Comparison
 				_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
 			};
 			
-			_tableView.OnEditUnit += (sender, args) =>
-			{
-				_pickerVisible = true;
-				if(_keyboardVisible)
-				{
-					_unitPicker.Frame = new RectangleF(0, View.Frame.Height - _unitPicker.Frame.Height, View.Frame.Width, 216);
-				}
-				else {
-					UIView.Animate(0.3, () =>
-					{
-						_unitPicker.Frame = new RectangleF(0, View.Frame.Height - _unitPicker.Frame.Height, View.Frame.Width, 216);
-					});
-				}
-			};
-			
 			_tableView.OnTouchesEnded += (sender, args) =>
 			{
-				if(_pickerVisible) {
-					_pickerVisible = false;
-					UIView.Animate(0.3, () =>{
-						_unitPicker.Frame = new RectangleF(0, 460, 320, 216);
-					});
-				}
 				_tableView.ResignTextFieldAsFirstResponder();
 			};
 			
 			_tableView.OnKeyboardDone += (sender, args) =>
 			{
-				if(_pickerVisible) {
-					_pickerVisible = false;
-					UIView.Animate(0.3, () =>{
-						_unitPicker.Frame = new RectangleF(0, 460, 320, 216);
-					});
-				}
 				_tableView.ResignTextFieldAsFirstResponder();
 			};
 			
@@ -128,11 +107,11 @@ namespace Cheaper.ViewControllers.Comparison
 			
 			if(_comparison == null)
 			{
-				_unitPicker = new UnitPicker(1, new RectangleF(0, 460, 320, 216));
+				_unitPicker = new UnitPicker(1, new RectangleF(0, View.Frame.Height - 216, 320, 216));
 			}
 			else
 			{
-				_unitPicker = new UnitPicker(_comparison.UnitTypeId, new RectangleF(0, 460, 320, 216));
+				_unitPicker = new UnitPicker(_comparison.UnitTypeId, new RectangleF(0, View.Frame.Height - 216, 320, 216));
 			}
 			
 			_unitPicker.OnSelectionChanged += (sender, args) =>
@@ -157,26 +136,6 @@ namespace Cheaper.ViewControllers.Comparison
 			}
 			
 			_initialized = true;
-		}
-		
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
-		
-			_keyboardShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.DidShowNotification, (notification) => {
-				_keyboardVisible = true;
-			});
-
-			_keyboardHideObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, (notification) => {
-				_keyboardVisible = false;
-			});
-		}
-		
-		public override void ViewDidUnload()
-		{
-			base.ViewDidUnload();
-			NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardHideObserver);
-			NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardShowObserver);
 		}
 	
 		private class EventedView : UIView

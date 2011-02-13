@@ -18,6 +18,11 @@ namespace Cheaper.ViewControllers
 		{
 		}
 		
+		public void ReloadRowForComparison(int comparisonId)
+		{
+			_tableView.ReloadRowForComparison(comparisonId);
+		}
+		
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();

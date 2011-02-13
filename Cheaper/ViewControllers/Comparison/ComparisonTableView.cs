@@ -30,11 +30,22 @@ namespace Cheaper.ViewControllers.Comparison
 			Source = _source;
 			ScrollEnabled = false;
 			AllowsSelection = false;
-		}
-		
-		public void ScrollToActiveRow()
-		{
-			ScrollToRow(_source.ActiveIndexPath, UITableViewScrollPosition.Top, true);
+			
+			var footerView = new UIView(new RectangleF(0, 0, Frame.Width, 34));
+			footerView.Center = new PointF(Frame.Width / 2, 17);
+			var footerLabel = new UILabel(new RectangleF(0, 0, footerView.Frame.Width - 100, 34));
+			footerLabel.Center = new PointF(footerView.Frame.Width / 2, 17);
+			footerLabel.TextAlignment = UITextAlignment.Center;
+			footerLabel.Text = "Comparisons will be performed using this base unit";
+			footerLabel.Lines = 2;
+			footerLabel.Font = UIFont.FromName("Helvetica", 14);
+			footerLabel.BackgroundColor = UIColor.Clear;
+			footerLabel.TextColor = UIColor.DarkGray;
+			footerLabel.ShadowColor = UIColor.White;
+			footerLabel.ShadowOffset = new SizeF(0, 1);
+			footerView.AddSubview(footerLabel);
+			
+			TableFooterView = footerView;
 		}
 		
 		public override void TouchesEnded(NSSet touches, UIEvent evt)

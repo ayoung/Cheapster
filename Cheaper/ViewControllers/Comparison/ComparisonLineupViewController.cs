@@ -44,6 +44,10 @@ namespace Cheaper.ViewControllers.Comparison
 		
 		public void Reload()
 		{
+			// refresh comparison from DB
+			_comparison = DataService.GetComparison(_comparison.Id);
+			Title = _comparison.Name;
+
 			_tableView.Reset();
 		}
 		

@@ -45,17 +45,38 @@ namespace Cheaper.Data
 		
 		public static int SaveComparison(ComparisonModel comparison)
 		{
-			var commandText = "insert into Comparison (UnitTypeId, UnitId, Name) values (@UnitTypeId, @UnitId, @Name);";
-			commandText += "select last_insert_rowid();";
+			var commandText = string.Empty;
+			
+			if(comparison.Id == 0)
+			{
+				commandText = "insert into Comparison (UnitTypeId, UnitId, Name) values (@UnitTypeId, @UnitId, @Name);";
+				commandText += "select last_insert_rowid();";
+			}
+			else 
+			{
+				commandText = "update Comparison set UnitTypeId=@UnitTypeId, UnitId=@UnitId, Name=@Name where Id=@Id;";
+			}
+			
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@UnitTypeId", comparison.UnitTypeId);
 			parameters.Add("@Name", comparison.Name);
 			parameters.Add("@UnitId", comparison.UnitId);
+			parameters.Add("@Id", comparison.Id);
+			
 			int newId = 0;
-			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) => {
-				newId = reader.Read() ? reader.GetInt32(0) : 0;
-			});
-			return newId;
+			
+			if(comparison.Id == 0)
+			{
+				SqlConnection.ReaderWithCommand(commandText, parameters, (reader) => {
+					newId = reader.Read() ? reader.GetInt32(0) : 0;
+				});
+				return newId;
+			}
+			else
+			{
+				SqlConnection.ExecuteNonQuery(commandText, parameters);
+				return comparison.Id;
+			}
 		}
 		
 		private static ComparisonModel CreateComparison(SqliteDataReader reader)

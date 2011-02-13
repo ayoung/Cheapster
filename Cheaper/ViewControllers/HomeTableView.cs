@@ -26,6 +26,23 @@ namespace Cheaper.ViewControllers
 			};
 			Source = _source;
 		}
+
+		public void ReloadRowForComparison(int comparisonId)
+		{
+			var comparison = (from c in Comparisons
+				where c.Id == comparisonId
+				select c).FirstOrDefault();
+			
+			if(comparison == null)
+			{
+				return;
+			}
+			
+			var index = Comparisons.IndexOf(comparison);
+			Comparisons[index] = DataService.GetComparison(comparisonId);
+			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) };
+			ReloadRows(indexPaths, UITableViewRowAnimation.None);
+		}
 		
 		private void Reset()
 		{

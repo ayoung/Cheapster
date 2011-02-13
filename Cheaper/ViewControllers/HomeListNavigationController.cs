@@ -80,8 +80,11 @@ namespace Cheaper.ViewControllers
 					{
 						DismissModalViewControllerAnimated(true);
 					};
+					
 					_comparisonViewController.OnFinished += (sender__, args__) =>
 					{
+						_comparisonLineupViewController.Reload();
+						
 						DismissModalViewControllerAnimated(true);
 					};
 					PresentModalViewController(_comparisonViewController, true);
