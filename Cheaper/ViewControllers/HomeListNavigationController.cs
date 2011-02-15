@@ -32,6 +32,7 @@ namespace Cheaper.ViewControllers
 						throw new Exception("New comparison id was not set.");
 					}
 					
+					_homeListViewController.EnableTrashButton();
 					_homeListViewController.SelectComparisonOnViewDidAppear(_comparisonViewController.NewComparisonId.Value);
 					DismissModalViewControllerAnimated(true);
 					_comparableViewController = null;

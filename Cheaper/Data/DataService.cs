@@ -43,6 +43,23 @@ namespace Cheaper.Data
 			return comparison;
 		}
 		
+		/// <summary>
+		/// Deletes a comparison with the given id.
+		/// </summary>
+		/// <param name="id">
+		/// The comparison to delete.
+		/// </param>
+		/// <returns>
+		/// A value whether a comparison has been deleted. False if nothing was deleted.
+		/// </returns>
+		public static bool DeleteComparison(int id)
+		{
+			var commandText = "delete from Comparison where Id = @Id;";
+			var parameters = new Dictionary<string, object>();
+			parameters.Add("@Id", id);
+			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
+		}
+		
 		public static int SaveComparison(ComparisonModel comparison)
 		{
 			var commandText = string.Empty;

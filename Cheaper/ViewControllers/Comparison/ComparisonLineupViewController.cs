@@ -16,6 +16,7 @@ namespace Cheaper.ViewControllers.Comparison
 		private ComparisonLineupTableView _tableView;
 		private UIToolbar _toolbar;
 		private ComparisonModel _comparison;
+		private UIBarButtonItem _trashButton;
 		
 		public ComparisonLineupViewController(int comparisonId)
 		{
@@ -37,12 +38,19 @@ namespace Cheaper.ViewControllers.Comparison
 			_toolbar = new UIToolbar(new RectangleF(0, View.Frame.Height - 88, View.Frame.Width, 44));
 			_toolbar.TintColor = UIColor.DarkGray;
 			var toolbarItems = new List<UIBarButtonItem>();
-			var buttonItem = new UIBarButtonItem("Edit", UIBarButtonItemStyle.Bordered, (sender, args) => 
+			var editButtonItem = new UIBarButtonItem("Change Base Unit", UIBarButtonItemStyle.Bordered, (sender, args) => 
 			{ 
 				OnModify.Fire(this, new EventArgs());
 			});
+			
+			_trashButton = new UIBarButtonItem(UIBarButtonSystemItem.Trash, (sender, args) =>
+			{
+
+			});
+			
+			toolbarItems.Add(editButtonItem);
 			toolbarItems.Add(new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace));
-			toolbarItems.Add(buttonItem);
+			toolbarItems.Add(_trashButton);
 			_toolbar.SetItems(toolbarItems.ToArray(), false);
 			View.AddSubview(_toolbar);
 		}

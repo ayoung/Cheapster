@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 using Cheaper.Data;
 using Cheaper.Data.Models;
 
@@ -10,6 +11,7 @@ namespace Cheaper.ViewControllers
 	public class HomeTableViewSource : UITableViewSource
 	{
 		private HomeTableView _tableView;
+		private bool _deletingLastRow;
 		
 		public event EventHandler OnComparisonSelected;
 		
@@ -25,11 +27,39 @@ namespace Cheaper.ViewControllers
 		
 		public override int RowsInSection(UITableView tableview, int section)
 		{
-			if(_tableView.Comparisons == null || _tableView.Comparisons.Count == 0) {
+			if(!_deletingLastRow && (_tableView.Comparisons == null || _tableView.Comparisons.Count == 0))
+			{
 				return 1;
 			}
 			
+			_deletingLastRow = false;
 			return _tableView.Comparisons.Count;
+		}
+		
+		public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+		{
+			if(editingStyle != UITableViewCellEditingStyle.Delete)
+			{
+				return;
+			}
+			
+			var comparison = _tableView.Comparisons[indexPath.Row];
+			if(!DataService.DeleteComparison(comparison.Id))
+			{
+				new UIAlertView("Info", "Comparison was not found. Could not delete.", null, "Dismiss").Show();
+			}
+			
+			if(!_tableView.Comparisons.Remove(comparison))
+			{
+				new UIAlertView("Info", "Comparison was not found in the list. Could not delete.", null, "Dismiss").Show();
+			}
+			
+			if(_tableView.Comparisons.Count == 0)
+			{
+				_deletingLastRow = true;
+			}
+			
+			tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
 		}
 		
 //		public override string TitleForDeleteConfirmation(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)

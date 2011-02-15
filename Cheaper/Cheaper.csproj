@@ -72,7 +72,6 @@
     <WarningLevel>4</WarningLevel>
     <MtouchDebug>False</MtouchDebug>
     <CodesignKey>iPhone Distribution: Andrew Young</CodesignKey>
-    <CodesignProvision>4F2EF89A-698E-47B0-AE87-BD55D8B73344</CodesignProvision>
     <MtouchI18n />
   </PropertyGroup>
   <ItemGroup>
@@ -123,7 +122,6 @@
     <Compile Include="ViewControllers\Shared\UnitPicker.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonTableView.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonTableViewSource.cs" />
-    <Compile Include="ViewControllers\Comparison\ComparisonViewController.bk.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonViewController.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
 using Cheaper.Data;
+using Cheaper.ViewControllers.Shared;
 
 namespace Cheaper.ViewControllers
 {
@@ -13,6 +14,7 @@ namespace Cheaper.ViewControllers
 		private bool _shouldSelectComparisonOnViewDidAppear;
 		private HomeTableView _tableView;
 		private UIToolbar _toolbar;
+		private UIBarButtonItem _trashButton;
 		
 		public HomeListViewController()
 		{
@@ -30,10 +32,7 @@ namespace Cheaper.ViewControllers
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
 			{
-				if(OnAddComparison != null)
-				{
-					OnAddComparison(this, EventArgs.Empty);
-				}
+				OnAddComparison.Fire(this, EventArgs.Empty);
 			});
 			
 			_tableView = new HomeTableView(new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
@@ -41,8 +40,21 @@ namespace Cheaper.ViewControllers
 			{
 				NavigationItem.BackBarButtonItem = new UIBarButtonItem("Home", UIBarButtonItemStyle.Bordered, null);
 				SelectedComparisonId = _tableView.GetSelectedComparison().Id;
-				if(OnComparisonSelected != null) {
-					OnComparisonSelected(this, EventArgs.Empty);
+				OnComparisonSelected.Fire(this, EventArgs.Empty);
+			};
+			_tableView.OnComparisonDeleted += (sender, args) =>
+			{
+				if(_tableView.Comparisons.Count > 0)
+				{
+					return;
+				}
+
+				_trashButton.Enabled = false;
+
+				if(_tableView.Editing)
+				{
+					NavigationItem.RightBarButtonItem.Enabled = true;
+					_tableView.SetEditing(false, true);
 				}
 			};
 			View.AddSubview(_tableView);
@@ -50,14 +62,32 @@ namespace Cheaper.ViewControllers
 			_toolbar = new UIToolbar(new RectangleF(0, View.Frame.Height - 88, View.Frame.Width, 44));
 			_toolbar.TintColor = UIColor.DarkGray;
 			var toolbarItems = new List<UIBarButtonItem>();
-			var buttonItem = new UIBarButtonItem(UIBarButtonSystemItem.Trash, (sender, args) =>
+			_trashButton = new UIBarButtonItem(UIBarButtonSystemItem.Trash, (sender, args) =>
 			{
+				NavigationItem.RightBarButtonItem.Enabled = _tableView.Editing;
 				_tableView.SetEditing(!_tableView.Editing, true);
 			});
+
+			var infoButton = UIButton.FromType(UIButtonType.Info);
+			infoButton.TouchUpInside += (sender, args) =>
+			{
+				
+			};
+			
+			toolbarItems.Add(new UIBarButtonItem(infoButton));
 			toolbarItems.Add(new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace));
-			toolbarItems.Add(buttonItem);
+			toolbarItems.Add(_trashButton);
 			_toolbar.SetItems(toolbarItems.ToArray(), false);
 			View.AddSubview(_toolbar);
+
+			if(_tableView.Comparisons.Count == 0) {
+				_trashButton.Enabled = false;
+			}
+		}
+		
+		public void EnableTrashButton()
+		{
+			_trashButton.Enabled = true;
 		}
 		
 		public override void ViewDidAppear(bool animated)
@@ -72,10 +102,6 @@ namespace Cheaper.ViewControllers
 				_tableView.ReloadData();
 				_tableView.SelectComparison(SelectedComparisonId.Value);
 				
-//				if(OnComparisonSelected != null) {
-//					NavigationItem.BackBarButtonItem = new UIBarButtonItem("Comparison List", UIBarButtonItemStyle.Bordered, null);
-//					OnComparisonSelected(this, EventArgs.Empty);
-//				}
 				return;
 			}
 			

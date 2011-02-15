@@ -14,6 +14,7 @@ namespace Cheaper.ViewControllers
 	{
 		private HomeTableViewSource _source;
 		public event EventHandler OnComparisonSelected;
+		public event EventHandler OnComparisonDeleted;
 		public List<ComparisonModel> Comparisons { get; private set; }
 		
 		public HomeTableView(RectangleF frame, UITableViewStyle style) : base(frame, style)
@@ -48,12 +49,19 @@ namespace Cheaper.ViewControllers
 		private void Reset()
 		{
 			Comparisons = DataService.GetComparisons();
-			if(Comparisons.Count == 0) {
+			SetScrollAndSelection();
+		}
+		
+		private void SetScrollAndSelection()
+		{
+			if(Comparisons.Count == 0)
+			{
 				AllowsSelection = false;
 				ScrollEnabled = false;
 			}
 
-			else {
+			else
+			{
 				AllowsSelection = true;
 				ScrollEnabled = true;
 			}
@@ -63,6 +71,19 @@ namespace Cheaper.ViewControllers
 		{
 			Reset();
 			base.ReloadData();
+		}
+		
+		public override void DeleteRows(NSIndexPath[] atIndexPaths, UITableViewRowAnimation withRowAnimation)
+		{
+			base.DeleteRows(atIndexPaths, withRowAnimation);
+			
+			if(Comparisons.Count == 0)
+			{
+				InsertRows(atIndexPaths, withRowAnimation);
+				SetScrollAndSelection();
+			}
+			
+			OnComparisonDeleted.Fire(this, EventArgs.Empty);
 		}
 		
 		public ComparisonModel GetSelectedComparison()
@@ -81,8 +102,9 @@ namespace Cheaper.ViewControllers
 				return;
 			}
 			
-			SelectRow(NSIndexPath.FromRowSection(Comparisons.IndexOf(comparison), 0), true, UITableViewScrollPosition.Top);
-			OnComparisonSelected.Fire(this, EventArgs.Empty);
+			var indexPath = NSIndexPath.FromRowSection(Comparisons.IndexOf(comparison), 0);
+			SelectRow(indexPath, true, UITableViewScrollPosition.Top);
+			DeselectRow(indexPath, true);
 		}
 		
 		public void DeselectSelectedRow()
