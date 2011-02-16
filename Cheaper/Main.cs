@@ -27,6 +27,7 @@ namespace Cheaper
 			
 			_shoppingListNavigationController = new HomeListNavigationController();
 			window.AddSubview(_shoppingListNavigationController.View);
+			window.BackgroundColor = UIColor.ScrollViewTexturedBackgroundColor;
 			window.MakeKeyAndVisible();
 			Window = window;
 			return true;

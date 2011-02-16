@@ -4,6 +4,7 @@ using System.Linq;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using Cheaper.ViewControllers.Shared;
+using Cheaper.Data.Models;
 
 namespace Cheaper.ViewControllers.Comparable
 {
@@ -12,11 +13,12 @@ namespace Cheaper.ViewControllers.Comparable
 		public event EventHandler OnTouchesEnded;
 		public event EventHandler OnEditUnit;
 		public event EventHandler OnKeyboardDone;
+		public event EventHandler OnProductNameChanged;
 		private ComparableTableViewSource _tableViewSource;
 		
-		public ComparableTableView(RectangleF frame, UITableViewStyle style) : base(frame, style)
+		public ComparableTableView(RectangleF frame, UITableViewStyle style, ComparableModel comparable) : base(frame, style)
 		{
-			_tableViewSource = new ComparableTableViewSource(this);
+			_tableViewSource = new ComparableTableViewSource(this, comparable);
 			_tableViewSource.OnEditUnit += (sender, args) =>
 			{
 				OnEditUnit.Fire(this, args);
@@ -33,6 +35,11 @@ namespace Cheaper.ViewControllers.Comparable
 		public void ScrollToActiveRow()
 		{
 			ScrollToRow(_tableViewSource.ActiveIndexPath, UITableViewScrollPosition.Top, true);
+		}
+		
+		public void FireOnProductNameChanged()
+		{
+			OnProductNameChanged.Fire(this, EventArgs.Empty);
 		}
 		
 		public override void TouchesEnded(NSSet touches, UIEvent evt)

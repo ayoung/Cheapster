@@ -25,7 +25,7 @@ namespace Cheaper
 		
 		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
-			if(_tableView.Comparables == null || _tableView.Comparables.Count == 0)
+			if(_tableView.Comparables.Count == 0)
 			{
 				var placeholderCell = new UITableViewCell();
 				var placeholderLabel = new UILabel(new RectangleF(0, 0, _tableView.Frame.Width, 20));

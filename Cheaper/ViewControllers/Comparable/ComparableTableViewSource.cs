@@ -4,6 +4,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using Cheaper.ViewControllers.Shared;
+using Cheaper.Data.Models;
 
 namespace Cheaper.ViewControllers.Comparable
 {
@@ -16,15 +17,21 @@ namespace Cheaper.ViewControllers.Comparable
 		public UILabel UnitLabel { get; private set; }
 		public List<UITextField> TextFields { get; private set; }
 		private ComparableTableView _tableView;
+		private ComparableModel _comparable;
 		public event EventHandler OnEditUnit;
 		public event EventHandler OnKeyboardDone;
 		
-		public ComparableTableViewSource(ComparableTableView tableView)
+		public ComparableTableViewSource(ComparableTableView tableView) : this(tableView, null)
 		{
+		}
+		
+		public ComparableTableViewSource(ComparableTableView tableView, ComparableModel comparable)
+		{
+			_comparable = comparable;
 			_tableView = tableView;
 			TextFields = new List<UITextField>();
 		}
-		
+
 		public override int NumberOfSections(UITableView tableView)
 		{
 			return 1;
@@ -40,12 +47,18 @@ namespace Cheaper.ViewControllers.Comparable
 			var cell = new EventedTableViewCell();
 			switch(indexPath.Row) {
 				case (0):
-					AddLabel(cell, "Store");
-					StoreText = AddTextField(cell, "store name (optional)", indexPath, () => { return ProductText; });
-					break;
-				case (1):
 					AddLabel(cell, "Product");
 					ProductText = AddTextField(cell, "or brand name (optional)", indexPath, () => { return PriceText; });
+					ProductText.Text = _comparable == null ? null : _comparable.Product;
+					ProductText.EditingChanged += (sender, args) => 
+					{
+						_tableView.FireOnProductNameChanged();
+					};
+					break;
+				case (1):
+					AddLabel(cell, "Store");
+					StoreText = AddTextField(cell, "store name (optional)", indexPath, () => { return ProductText; });
+					StoreText.Text = _comparable == null ? null : _comparable.Store;
 					break;
 				case (2):
 					AddLabel(cell, "Price");
@@ -57,6 +70,7 @@ namespace Cheaper.ViewControllers.Comparable
 					label.Text = "$";
 					PriceText.LeftView = label;
 					PriceText.LeftViewMode = UITextFieldViewMode.Always;
+					PriceText.Text = _comparable == null ? null : _comparable.Price.ToString();
 					break;
 				case (3):
 					AddLabel(cell, "Quantity");
@@ -67,12 +81,12 @@ namespace Cheaper.ViewControllers.Comparable
 					});
 					QuantityText.KeyboardType = UIKeyboardType.NumberPad;
 					QuantityText.ReturnKeyType = UIReturnKeyType.Done;
+					QuantityText.Text = _comparable == null ? null : _comparable.Quantity.ToString();
 					break;
 				case (4):
 					AddLabel(cell, "Unit");
 					UnitLabel = new UILabel(new RectangleF(0, 0, cell.Frame.Width - 115, 20));
 					UnitLabel.Center = new PointF(200, (cell.Frame.Height / 2));
-					UnitLabel.Text = "ounces";
 					UnitLabel.Font = UIFont.FromName("Helvetica", 14);
 					UnitLabel.TextColor = UIColor.DarkTextColor;
 					cell.AddSubview(UnitLabel);

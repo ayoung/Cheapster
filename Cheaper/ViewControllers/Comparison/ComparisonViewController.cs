@@ -11,15 +11,14 @@ namespace Cheaper.ViewControllers.Comparison
 	public class ComparisonViewController : UIViewController
 	{
 		private UnitPicker _unitPicker;
-		private ComparisonModel _comparison;
 		public event EventHandler OnFinished;
 		public event EventHandler OnCanceled;
 		public ComparisonTableView _tableView;
 		private bool _initialized;
 		
-		public ComparisonViewController(int comparisonId)
+		public ComparisonViewController(ComparisonModel comparison)
 		{
-			_comparison = DataService.GetComparison(comparisonId);
+			Comparison = comparison;
 			Initialize();
 		}
 
@@ -28,7 +27,7 @@ namespace Cheaper.ViewControllers.Comparison
 			Initialize();
 		}
 
-		public int? NewComparisonId { get; private set; }
+		public ComparisonModel Comparison { get; private set; }
 
 		private void Initialize()
 		{
@@ -44,7 +43,7 @@ namespace Cheaper.ViewControllers.Comparison
 			View.BackgroundColor = UIColor.GroupTableViewBackgroundColor;
 			var navigationBar = new UINavigationBar(new RectangleF(0, 0, View.Frame.Width, 44));
 			navigationBar.TintColor = UIColor.DarkGray;
-			var navigationItem = new UINavigationItem(_comparison == null ? "New Comparison" : _comparison.Name);
+			var navigationItem = new UINavigationItem(Comparison == null ? "New Comparison" : Comparison.Name);
 			var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, (sender, args) =>
 			{
 				if(_tableView.ComparisonName == null || _tableView.ComparisonName.Trim() == string.Empty)
@@ -53,20 +52,21 @@ namespace Cheaper.ViewControllers.Comparison
 					return;
 				}
 				
-				if(_comparison == null)
+				if(Comparison == null)
 				{
-					NewComparisonId = DataService.SaveComparison(new ComparisonModel() {
+					Comparison = new ComparisonModel() {
 						Name = _tableView.ComparisonName.Trim(),
 						UnitId = _unitPicker.SelectedUnit.Id,
 						UnitTypeId = _tableView.UnitTypeId
-					});
+					};
+					Comparison.Id = DataService.SaveComparison(Comparison);
 				}
 				else
 				{
-					_comparison.Name = _tableView.ComparisonName.Trim();
-					_comparison.UnitId = _unitPicker.SelectedUnit.Id;
-					_comparison.UnitTypeId = _tableView.UnitTypeId;
-					DataService.SaveComparison(_comparison);
+					Comparison.Name = _tableView.ComparisonName.Trim();
+					Comparison.UnitId = _unitPicker.SelectedUnit.Id;
+					Comparison.UnitTypeId = _tableView.UnitTypeId;
+					DataService.UpdateComparison(Comparison);
 				}
 
 				if(OnFinished != null) {
@@ -76,9 +76,9 @@ namespace Cheaper.ViewControllers.Comparison
 			
 			var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (sender, args) =>
 			{
-				if(_comparison != null)
+				if(Comparison != null)
 				{
-					navigationItem.Title = _comparison.Name;
+					navigationItem.Title = Comparison.Name;
 				}
 				
 				if(OnCanceled != null) {
@@ -108,7 +108,7 @@ namespace Cheaper.ViewControllers.Comparison
 				_tableView.ResignTextFieldAsFirstResponder();
 			};
 			
-			if(_comparison != null)
+			if(Comparison != null)
 			{
 				_tableView.OnNameChanged += (sender, args) =>
 				{
@@ -118,13 +118,13 @@ namespace Cheaper.ViewControllers.Comparison
 			
 			View.AddSubview(_tableView);
 			
-			if(_comparison == null)
+			if(Comparison == null)
 			{
 				_unitPicker = new UnitPicker(1, new RectangleF(0, View.Frame.Height - 216, 320, 216));
 			}
 			else
 			{
-				_unitPicker = new UnitPicker(_comparison.UnitTypeId, new RectangleF(0, View.Frame.Height - 216, 320, 216));
+				_unitPicker = new UnitPicker(Comparison.UnitTypeId, new RectangleF(0, View.Frame.Height - 216, 320, 216));
 			}
 			
 			_unitPicker.OnSelectionChanged += (sender, args) =>
@@ -139,12 +139,12 @@ namespace Cheaper.ViewControllers.Comparison
 		{
 			base.ViewWillAppear(animated);
 			
-			if(_comparison != null && !_initialized)
+			if(Comparison != null && !_initialized)
 			{
-				_tableView.ComparisonName = _comparison.Name;
-				_tableView.UnitTypeId = _comparison.UnitTypeId;
-				_tableView.DisableUnitTypesExcept(_comparison.UnitTypeId);
-				_unitPicker.SetSelectedUnit(_comparison.UnitId);
+				_tableView.ComparisonName = Comparison.Name;
+				_tableView.UnitTypeId = Comparison.UnitTypeId;
+				_tableView.DisableUnitTypesExcept(Comparison.UnitTypeId);
+				_unitPicker.SetSelectedUnit(Comparison.UnitId);
 				_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
 			}
 			

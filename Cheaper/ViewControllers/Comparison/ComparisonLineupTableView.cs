@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 using Cheaper.Data;
 using Cheaper.Data.Models;
 using Cheaper.ViewControllers.Shared;
@@ -32,6 +33,22 @@ namespace Cheaper.ViewControllers.Comparison
 			return Comparables[IndexPathForSelectedRow.Row];
 		}
 		
+		public void AddComparable(ComparableModel comparable)
+		{
+			if(Comparables.Count == 0)
+			{
+				Comparables.Add(comparable);
+				ReloadRows(new NSIndexPath[] { NSIndexPath.FromRowSection(0, 0) }, UITableViewRowAnimation.Fade);
+			}
+			else
+			{
+				Comparables.Add(comparable);
+				BeginUpdates();
+				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(Comparables.Count - 1, 0) }, UITableViewRowAnimation.Fade);
+				EndUpdates();
+			}
+		}
+		
 		public void Reset()
 		{
 			Comparables = DataService.GetComparables(_comparisonId);
@@ -45,6 +62,15 @@ namespace Cheaper.ViewControllers.Comparison
 				AllowsSelection = true;
 			}
 			ReloadData();
+		}
+
+		public void DeselectSelectedRow()
+		{
+			if(IndexPathForSelectedRow == null)
+			{
+				return;
+			}
+			DeselectRow(IndexPathForSelectedRow, true);
 		}
 	}
 }

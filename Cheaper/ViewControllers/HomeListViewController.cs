@@ -4,6 +4,7 @@ using System.Drawing;
 using MonoTouch.UIKit;
 using Cheaper.Data;
 using Cheaper.ViewControllers.Shared;
+using Cheaper.Data.Models;
 
 namespace Cheaper.ViewControllers
 {
@@ -11,10 +12,11 @@ namespace Cheaper.ViewControllers
 	{
 		public event EventHandler OnAddComparison;
 		public event EventHandler OnComparisonSelected;
-		private bool _shouldSelectComparisonOnViewDidAppear;
+		public event EventHandler OnInfoButton;
 		private HomeTableView _tableView;
 		private UIToolbar _toolbar;
 		private UIBarButtonItem _trashButton;
+		private ComparisonModel _comparisonToAdd;
 		
 		public HomeListViewController()
 		{
@@ -25,10 +27,12 @@ namespace Cheaper.ViewControllers
 			_tableView.ReloadRowForComparison(comparisonId);
 		}
 		
+		public ComparisonModel SelectedComparison { get; private set; }
+		
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			Title = "Cheaper";
+			Title = "*Cheaper*";
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
 			{
@@ -39,7 +43,7 @@ namespace Cheaper.ViewControllers
 			_tableView.OnComparisonSelected += (sender, args) =>
 			{
 				NavigationItem.BackBarButtonItem = new UIBarButtonItem("Home", UIBarButtonItemStyle.Bordered, null);
-				SelectedComparisonId = _tableView.GetSelectedComparison().Id;
+				SelectedComparison = _tableView.GetSelectedComparison();
 				OnComparisonSelected.Fire(this, EventArgs.Empty);
 			};
 			_tableView.OnComparisonDeleted += (sender, args) =>
@@ -68,10 +72,10 @@ namespace Cheaper.ViewControllers
 				_tableView.SetEditing(!_tableView.Editing, true);
 			});
 
-			var infoButton = UIButton.FromType(UIButtonType.Info);
+			var infoButton = UIButton.FromType(UIButtonType.InfoLight);
 			infoButton.TouchUpInside += (sender, args) =>
 			{
-				
+				OnInfoButton.Fire(this, EventArgs.Empty);
 			};
 			
 			toolbarItems.Add(new UIBarButtonItem(infoButton));
@@ -93,35 +97,23 @@ namespace Cheaper.ViewControllers
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-			if(_shouldSelectComparisonOnViewDidAppear)
+			if(_comparisonToAdd != null)
 			{
-				// reset the flag
-				_shouldSelectComparisonOnViewDidAppear = false;
-				
-				// reload table data
-				_tableView.ReloadData();
-				_tableView.SelectComparison(SelectedComparisonId.Value);
-				
-				return;
+				_tableView.AddComparison(_comparisonToAdd);
+				_comparisonToAdd = null;
 			}
-			
+
 			_tableView.DeselectSelectedRow();
 		}
 		
-		public int? SelectedComparisonId { get; set; }
+		public void AddComparison(ComparisonModel comparison)
+		{
+			_comparisonToAdd = comparison;
+		}
 		
 		public void Reload() 
 		{
 			// todo: implement table reload here
-		}
-		
-		/// <summary>
-		/// Causes this controller to redirect to the given 
-		/// </summary>
-		public void SelectComparisonOnViewDidAppear (int comparisonToSelect)
-		{
-			_shouldSelectComparisonOnViewDidAppear = true;
-			SelectedComparisonId = comparisonToSelect;
 		}
 	}
 }

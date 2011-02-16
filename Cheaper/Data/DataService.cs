@@ -62,38 +62,37 @@ namespace Cheaper.Data
 		
 		public static int SaveComparison(ComparisonModel comparison)
 		{
-			var commandText = string.Empty;
-			
-			if(comparison.Id == 0)
+			if(comparison.Id != 0)
 			{
-				commandText = "insert into Comparison (UnitTypeId, UnitId, Name) values (@UnitTypeId, @UnitId, @Name);";
-				commandText += "select last_insert_rowid();";
-			}
-			else 
-			{
-				commandText = "update Comparison set UnitTypeId=@UnitTypeId, UnitId=@UnitId, Name=@Name where Id=@Id;";
+				throw new ArgumentException("Comparison with non-zero id cannot be saved.");
 			}
 			
+			var commandText = "insert into Comparison (UnitTypeId, UnitId, Name) values (@UnitTypeId, @UnitId, @Name);";
+			commandText += "select last_insert_rowid();";
+			
+			var parameters = new Dictionary<string, object>();
+			parameters.Add("@UnitTypeId", comparison.UnitTypeId);
+			parameters.Add("@Name", comparison.Name);
+			parameters.Add("@UnitId", comparison.UnitId);
+			
+			int newId = 0;
+
+			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) => {
+				newId = reader.Read() ? reader.GetInt32(0) : 0;
+			});
+			return newId;
+		}
+		
+		public static bool UpdateComparison(ComparisonModel comparison)
+		{
+			var commandText = "update Comparison set UnitTypeId=@UnitTypeId, UnitId=@UnitId, Name=@Name where Id=@Id;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@UnitTypeId", comparison.UnitTypeId);
 			parameters.Add("@Name", comparison.Name);
 			parameters.Add("@UnitId", comparison.UnitId);
 			parameters.Add("@Id", comparison.Id);
 			
-			int newId = 0;
-			
-			if(comparison.Id == 0)
-			{
-				SqlConnection.ReaderWithCommand(commandText, parameters, (reader) => {
-					newId = reader.Read() ? reader.GetInt32(0) : 0;
-				});
-				return newId;
-			}
-			else
-			{
-				SqlConnection.ExecuteNonQuery(commandText, parameters);
-				return comparison.Id;
-			}
+			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
 		}
 		
 		private static ComparisonModel CreateComparison(SqliteDataReader reader)
@@ -161,6 +160,27 @@ namespace Cheaper.Data
 				newId = reader.Read() ? reader.GetInt32(0) : 0;
 			});
 			return newId;
+		}
+		
+		/// <summary>
+		/// Updates all properties of a comparable except for the ComparisonId.
+		/// </summary>
+		/// <param name="comparable">
+		/// A <see cref="ComparableModel"/>
+		/// </param>
+		/// <returns>
+		/// True if rows were updated.
+		/// </returns>
+		public static bool UpdateComparable(ComparableModel comparable)
+		{
+			var commandText = "update Comparable set UnitId=@UnitId, Store=@Store, Product=@Product, Price=@Price, Quantity=@Quantity;";
+			var parameters = new Dictionary<string, object>();
+			parameters.Add("@UnitId", comparable.UnitId);
+			parameters.Add("@Store", comparable.Store);
+			parameters.Add("@Product", comparable.Product);
+			parameters.Add("@Price", comparable.Price);
+			parameters.Add("@Quantity", comparable.Quantity);
+			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
 		}
 		
 		private static ComparableModel CreateComparable(SqliteDataReader reader)

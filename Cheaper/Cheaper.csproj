@@ -123,6 +123,7 @@
     <Compile Include="ViewControllers\Comparison\ComparisonTableView.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonTableViewSource.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonViewController.cs" />
+    <Compile Include="ViewControllers\AboutViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xib" />

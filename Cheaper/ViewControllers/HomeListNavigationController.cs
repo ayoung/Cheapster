@@ -11,6 +11,7 @@ namespace Cheaper.ViewControllers
 		private ComparableViewController _comparableViewController;
 		private ComparisonViewController _comparisonViewController;
 		private ComparisonLineupViewController _comparisonLineupViewController;
+		private AboutViewController _aboutViewController;
 		
 		public override void ViewDidLoad()
 		{
@@ -27,13 +28,13 @@ namespace Cheaper.ViewControllers
 				// select the created comparison in the shopping list controller
 				_comparisonViewController.OnFinished += (sender_, args_) =>
 				{
-					if(!_comparisonViewController.NewComparisonId.HasValue)
+					if(_comparisonViewController.Comparison == null)
 					{
 						throw new Exception("New comparison id was not set.");
 					}
 					
 					_homeListViewController.EnableTrashButton();
-					_homeListViewController.SelectComparisonOnViewDidAppear(_comparisonViewController.NewComparisonId.Value);
+					_homeListViewController.AddComparison(_comparisonViewController.Comparison);
 					DismissModalViewControllerAnimated(true);
 					_comparableViewController = null;
 				};
@@ -50,7 +51,7 @@ namespace Cheaper.ViewControllers
 			// go to the created comparison's lineup view when a comparison is selected
 			_homeListViewController.OnComparisonSelected += (sender, args) =>
 			{
-				_comparisonLineupViewController = new ComparisonLineupViewController(_homeListViewController.SelectedComparisonId.Value);
+				_comparisonLineupViewController = new ComparisonLineupViewController(_homeListViewController.SelectedComparison);
 				
 				// go to new comparable view if add button is touched
 				_comparisonLineupViewController.OnAddComparable += (sender_, args_) =>
@@ -58,7 +59,7 @@ namespace Cheaper.ViewControllers
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.ComparisonId);
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
-						_comparisonLineupViewController.Reload();
+						_comparisonLineupViewController.AddComparable(_comparableViewController.Comparable);
 						DismissModalViewControllerAnimated(true);
 						_comparableViewController = null;
 					};
@@ -70,27 +71,27 @@ namespace Cheaper.ViewControllers
 					PresentModalViewController(_comparableViewController, true);
 				};
 				
-				// go to edit comparable view if a comparable is selected
+				// go to edit comparable view when a comparable is selected
 				_comparisonLineupViewController.OnComparableSelected += (sender_, args_) =>
 				{
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.GetSelectedComparable());
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
-						_comparisonLineupViewController.Reload();
-						DismissModalViewControllerAnimated(true);
+						_comparisonLineupViewController.ReloadOnAppeared();
+						PopViewControllerAnimated(true);
 						_comparableViewController = null;
 					};
 					_comparableViewController.OnCanceled += (sender__, args__) =>
 					{
-						DismissModalViewControllerAnimated(true);
+						PopViewControllerAnimated(true);
 						_comparableViewController = null;
 					};
-					PresentModalViewController(_comparableViewController, true);					
+					PushViewController(_comparableViewController, true);
 				};
 				
 				_comparisonLineupViewController.OnModify += (sender_, args_) =>
 				{
-					_comparisonViewController = new ComparisonViewController(_homeListViewController.SelectedComparisonId.Value);
+					_comparisonViewController = new ComparisonViewController(_homeListViewController.SelectedComparison);
 					_comparisonViewController.OnCanceled += (sender__, args__) =>
 					{
 						DismissModalViewControllerAnimated(true);
@@ -98,14 +99,26 @@ namespace Cheaper.ViewControllers
 					
 					_comparisonViewController.OnFinished += (sender__, args__) =>
 					{
-						_comparisonLineupViewController.Reload();
+						_comparisonLineupViewController.ReloadOnAppeared();
 						_homeListViewController.ReloadRowForComparison(_comparisonLineupViewController.ComparisonId);
 						DismissModalViewControllerAnimated(true);
 					};
 					PresentModalViewController(_comparisonViewController, true);
 				};
 				
-				PushViewController (_comparisonLineupViewController, true);
+				PushViewController(_comparisonLineupViewController, true);
+			};
+			
+			_homeListViewController.OnInfoButton += (sender, args) =>
+			{
+				_aboutViewController = new AboutViewController();
+				_aboutViewController.OnDone += (sender_, args_) =>
+				{
+					DismissModalViewControllerAnimated(true);
+					_aboutViewController = null;
+				};
+				_aboutViewController.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
+				PresentModalViewController(_aboutViewController, true);
 			};
 
 			PushViewController (_homeListViewController, true);

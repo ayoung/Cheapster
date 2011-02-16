@@ -62,11 +62,6 @@ namespace Cheaper.ViewControllers
 			tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
 		}
 		
-//		public override string TitleForDeleteConfirmation(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
-//		{
-//			// TODO: Implement - see: http://go-mono.com/docs/index.aspx?link=T%3aMonoTouch.Foundation.ModelAttribute
-//		}
-		
 		public override UITableViewCell GetCell(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
 			if(_tableView.Comparisons == null || _tableView.Comparisons.Count == 0) {

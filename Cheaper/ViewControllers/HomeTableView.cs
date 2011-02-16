@@ -59,7 +59,6 @@ namespace Cheaper.ViewControllers
 				AllowsSelection = false;
 				ScrollEnabled = false;
 			}
-
 			else
 			{
 				AllowsSelection = true;
@@ -109,11 +108,28 @@ namespace Cheaper.ViewControllers
 		
 		public void DeselectSelectedRow()
 		{
-			if(IndexPathForSelectedRow == null) 
+			if(IndexPathForSelectedRow == null)
 			{
 				return;
 			}
 			DeselectRow(IndexPathForSelectedRow, true);
+		}
+		
+		public void AddComparison(ComparisonModel comparison)
+		{
+			if(Comparisons.Count == 0)
+			{
+				Comparisons.Add(comparison);
+				ReloadRows(new NSIndexPath[] { NSIndexPath.FromRowSection(0, 0) }, UITableViewRowAnimation.Fade);
+			}
+			else
+			{
+				Comparisons.Add(comparison);
+				BeginUpdates();
+				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(Comparisons.Count - 1, 0) }, UITableViewRowAnimation.Fade);
+				EndUpdates();
+			}
+			SetScrollAndSelection();
 		}
 	}
 }

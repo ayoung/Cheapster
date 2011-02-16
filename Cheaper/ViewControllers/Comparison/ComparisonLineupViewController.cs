@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 using Cheaper.Data;
 using Cheaper.Data.Models;
 using Cheaper.ViewControllers.Shared;
@@ -17,17 +18,19 @@ namespace Cheaper.ViewControllers.Comparison
 		private UIToolbar _toolbar;
 		private ComparisonModel _comparison;
 		private UIBarButtonItem _trashButton;
+		private bool _reloadOnAppeared;
+		private ComparableModel _comparableToAdd;
 		
-		public ComparisonLineupViewController(int comparisonId)
+		public ComparisonLineupViewController(ComparisonModel comparison)
 		{
-			_comparison = DataService.GetComparison(comparisonId);
+			_comparison = comparison;
 			Title = _comparison.Name;
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
 			{
 				OnAddComparable.Fire(this, new EventArgs());
 			});
 			
-			_tableView = new ComparisonLineupTableView(comparisonId, new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
+			_tableView = new ComparisonLineupTableView(comparison.Id, new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
 			_tableView.OnComparableSelected += (sender, args) =>
 			{
 				OnComparableSelected.Fire(this, EventArgs.Empty);
@@ -55,18 +58,54 @@ namespace Cheaper.ViewControllers.Comparison
 			View.AddSubview(_toolbar);
 		}
 		
-		public void ReloadRowForComparable(int comparableId)
+		public override void ViewDidAppear(bool animated)
 		{
+			base.ViewDidAppear(animated);
+			if(_reloadOnAppeared)
+			{
+				_reloadOnAppeared = false;
+				
+				if(_tableView.Comparables.Count == 0)
+				{
+					return;
+				}
+				
+				// fade table out, reload data and fade back in
+				_tableView.Opaque = false;
+				UIView.Animate(0.4, () =>
+				{
+					_tableView.Alpha = 0; 
+				}, () =>
+				{
+					_tableView.Reset();
+					UIView.Animate(0.4, () => 
+					{
+						_tableView.Alpha = 1;
+					}, () =>
+					{
+						_tableView.Opaque = true;
+					});
+				});
+			}
+			else if(_comparableToAdd != null)
+			{
+				_tableView.AddComparable(_comparableToAdd);
+				_comparableToAdd = null;
+			}
 			
+			_tableView.DeselectSelectedRow();
 		}
 		
-		public void Reload()
+		public void AddComparable(ComparableModel comparable)
 		{
-			// refresh comparison from DB
+			_comparableToAdd = comparable;
+		}
+		
+		public void ReloadOnAppeared()
+		{
 			_comparison = DataService.GetComparison(_comparison.Id);
 			Title = _comparison.Name;
-
-			_tableView.Reset();
+			_reloadOnAppeared = true;
 		}
 		
 		public ComparableModel GetSelectedComparable()

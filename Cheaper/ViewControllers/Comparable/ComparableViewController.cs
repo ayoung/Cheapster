@@ -20,6 +20,7 @@ namespace Cheaper.ViewControllers.Comparable
 		private NSObject _keyboardHideObserver;
 		private bool _pickerVisible;
 		private bool _keyboardVisible;
+		private UINavigationItem _navigationItem;
 		private static Regex _moneyRegex = new Regex(@"^\$?([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$");
 		
 		public ComparableViewController(ComparableModel comparable)
@@ -46,35 +47,39 @@ namespace Cheaper.ViewControllers.Comparable
 			View.BackgroundColor = UIColor.White;
 			
 			// add tableview
-			_tableView = new ComparableTableView(new RectangleF(0, 44, View.Frame.Width, View.Frame.Height - 44), UITableViewStyle.Grouped);
+			_tableView = new ComparableTableView(new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - NavBarOffset()), UITableViewStyle.Grouped, Comparable);
 			_tableView.OnEditUnit += (sender, args) =>
 			{
 				_pickerVisible = true;
 				if(_keyboardVisible)
 				{
 					_unitPicker.Frame = new RectangleF(0, View.Frame.Height - _unitPicker.Frame.Height, View.Frame.Width, 216);
-					_tableView.Frame = new RectangleF(0, 44, View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height - 44);
+					_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height - NavBarOffset());
 				}
-				else {
+				else
+				{
 					UIView.Animate(0.3, () =>
 					{
 						_unitPicker.Frame = new RectangleF(0, View.Frame.Height - _unitPicker.Frame.Height, View.Frame.Width, 216);
-						_tableView.Frame = new RectangleF(0, 44, View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height - 44);
+						_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height - NavBarOffset());
 					}, () => {
 						_tableView.ScrollToActiveRow();
 					});
 				}
 			};
+			_tableView.OnProductNameChanged += (sender, args) =>
+			{
+				_navigationItem.Title = string.IsNullOrEmpty(_tableView.Product) ? "Product" : _tableView.Product;
+			};
 			_tableView.OnKeyboardDone += (sender, args) =>
 			{
-				if(_pickerVisible) {
+				if(_pickerVisible)
+				{
 					_pickerVisible = false;
 					_unitPicker.Frame = new RectangleF(0, 460, 320, 216);
 				}
 				_tableView.ResignTextFieldAsFirstResponder();
 			};
-			
-			//_tableView.Store
 			
 			View.AddSubview(_tableView);
 			
@@ -86,38 +91,42 @@ namespace Cheaper.ViewControllers.Comparable
 			};
 			
 			View.AddSubview(_unitPicker);
-
-			var navigationBar = new UINavigationBar(new RectangleF(0, 0, View.Frame.Width, 44));
-			var navigationItem = new UINavigationItem("New Comparison");
-			var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, (sender, args) =>
+		}
+		
+		private UIBarButtonItem GetDoneButton()
+		{
+			return new UIBarButtonItem(UIBarButtonSystemItem.Save, (sender, args) =>
 			{
 				if(!ValidateData())
 				{
 					return;
 				}
 				
-				var comparable = new ComparableModel(){
-					ComparisonId = ComparisonId,
-					Price = Convert.ToDouble(_tableView.Price),
-					Product = _tableView.Product,
-					Quantity = Convert.ToDouble(_tableView.Quantity),
-					Store = _tableView.Store,
-					UnitId = _unitPicker.SelectedUnit.Id
-				};
+				if(Comparable == null)
+				{
+					Comparable = new ComparableModel(){
+						ComparisonId = ComparisonId,
+						Price = Convert.ToDouble(_tableView.Price),
+						Product = _tableView.Product,
+						Quantity = Convert.ToDouble(_tableView.Quantity),
+						Store = _tableView.Store,
+						UnitId = _unitPicker.SelectedUnit.Id
+					};
+					
+					Comparable.Id = DataService.SaveComparable(Comparable);
+				}
+				else
+				{
+					Comparable.Store = _tableView.Store;
+					Comparable.Product = _tableView.Product;
+					Comparable.Quantity = Convert.ToDouble(_tableView.Quantity);
+					Comparable.Price = Convert.ToDouble(_tableView.Price);
+					Comparable.UnitId = _unitPicker.SelectedUnit.Id;
+					DataService.UpdateComparable(Comparable);
+				}
 				
-				NewComparableId = DataService.SaveComparable(comparable);
 				OnFinished.Fire (this, new EventArgs ());
 			});
-			
-			var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (sender, args) =>
-			{
-				OnCanceled.Fire(this, EventArgs.Empty);
-			});
-
-			navigationItem.SetRightBarButtonItem (doneButton, false);
-			navigationItem.SetLeftBarButtonItem(cancelButton, false);
-			navigationBar.PushNavigationItem(navigationItem, false);
-			View.AddSubview(navigationBar);
 		}
 		
 		public bool ValidateData()
@@ -138,10 +147,44 @@ namespace Cheaper.ViewControllers.Comparable
 			return true;
 		}
 		
+		private void ConfigureNavigationBar()
+		{
+			if(Comparable == null)
+			{
+				var navigationBar = new UINavigationBar(new RectangleF(0, 0, View.Frame.Width, NavBarOffset()));
+				_navigationItem = new UINavigationItem("Product");
+				var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (sender, args) =>
+				{
+					OnCanceled.Fire(this, EventArgs.Empty);
+				});
+	
+				_navigationItem.SetRightBarButtonItem(GetDoneButton(), false);
+				_navigationItem.SetLeftBarButtonItem(cancelButton, false);
+				navigationBar.PushNavigationItem(_navigationItem, false);
+				View.AddSubview(navigationBar);
+			}
+			else
+			{
+				NavigationController.SetNavigationBarHidden(false, false);
+				NavigationItem.RightBarButtonItem = GetDoneButton();
+				_navigationItem = NavigationItem;
+				Title = Comparable.Product;
+			}
+		}
+		
+		private float NavBarOffset()
+		{
+			if(Comparable == null)
+			{
+				return 44;
+			}
+			return 0;
+		}
+		
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
-			_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
+			ConfigureNavigationBar();
 			
 			_keyboardShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.DidShowNotification, (notification) => {
 				var keyboardBounds = (NSValue)notification.UserInfo.ObjectForKey(UIKeyboard.BoundsUserInfoKey);
@@ -155,7 +198,7 @@ namespace Cheaper.ViewControllers.Comparable
 				}
 
 				UIView.Animate(0.3, () => {
-					_tableView.Frame = new RectangleF(0, 44, View.Frame.Width, View.Frame.Height - keyboardSize.Height - 44);
+					_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - keyboardSize.Height - NavBarOffset());
 				}, () => {
 					_tableView.ScrollToActiveRow();
 				});
@@ -167,21 +210,17 @@ namespace Cheaper.ViewControllers.Comparable
 				{
 					return;
 				}
-				_tableView.Frame = new RectangleF(0, 44 - _tableView.ContentOffset.Y, View.Frame.Width, View.Frame.Height - 44);
+				_tableView.Frame = new RectangleF(0, NavBarOffset() - _tableView.ContentOffset.Y, View.Frame.Width, View.Frame.Height - NavBarOffset());
 				UIView.Animate(0.3, () => {
-					_tableView.Frame = new RectangleF(0, 44, View.Frame.Width, _tableView.Frame.Height);
+					_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, _tableView.Frame.Height);
 				}, null);
 			});
-
-			if(Comparable != null)
-			{
-				_tableView.Store = Comparable.Store;
-				_tableView.Product = Comparable.Product;
-				_tableView.Quantity = Comparable.Quantity.ToString();
-				_tableView.Price = Comparable.Price.ToString();
-				_unitPicker.SetSelectedUnit(Comparable.UnitId);
-				_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
-			}
+		}
+		
+		public override void ViewDidAppear(bool animated)
+		{
+			base.ViewDidAppear(animated);
+			_tableView.SetUnitText(_unitPicker.SelectedUnit.FullName);
 		}
 		
 		private void SetTextFieldStyle(UITextField textField)
@@ -198,7 +237,6 @@ namespace Cheaper.ViewControllers.Comparable
 			NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardShowObserver);
 		}
 		
-		public int? NewComparableId { get; private set; }
 		public int ComparisonId { get; private set; }
 		public ComparisonModel Comparison { get; private set; }
 		public ComparableModel Comparable { get; private set; }
