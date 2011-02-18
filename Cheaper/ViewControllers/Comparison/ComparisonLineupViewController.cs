@@ -18,22 +18,41 @@ namespace Cheaper.ViewControllers.Comparison
 		private UIToolbar _toolbar;
 		private ComparisonModel _comparison;
 		private UIBarButtonItem _trashButton;
-		private bool _reloadOnAppeared;
 		private ComparableModel _comparableToAdd;
+		private bool _reloadOnAppeared;
 		
 		public ComparisonLineupViewController(ComparisonModel comparison)
 		{
 			_comparison = comparison;
-			Title = _comparison.Name;
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
-			{
-				OnAddComparable.Fire(this, new EventArgs());
-			});
+		}
+		
+		public override void ViewDidLoad()
+		{
+			base.ViewDidLoad();
 			
-			_tableView = new ComparisonLineupTableView(comparison.Id, new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
-			_tableView.OnComparableSelected += (sender, args) =>
+			var whiteBackground = new UIView(new RectangleF(0, 0, View.Frame.Width, View.Frame.Height));
+			whiteBackground.BackgroundColor = UIColor.White;
+			View.AddSubview(whiteBackground);
+			
+			Title = _comparison.Name;
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) => { OnAddComparable.Fire(this, new EventArgs()); });
+			
+			_tableView = new ComparisonLineupTableView(_comparison, new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
+			_tableView.OnComparableSelected += (sender, args) => { OnComparableSelected.Fire(this, EventArgs.Empty); };
+			_tableView.OnComparableDeleted += (sender, args) =>
 			{
-				OnComparableSelected.Fire(this, EventArgs.Empty);
+				if(_tableView.Comparables.Count > 0)
+				{
+					return;
+				}
+				
+				_trashButton.Enabled = false;
+				
+				if(_tableView.Editing)
+				{
+					NavigationItem.RightBarButtonItem.Enabled = true;
+					_tableView.SetEditing(false, true);
+				}
 			};
 			
 			View.AddSubview(_tableView);
@@ -41,14 +60,12 @@ namespace Cheaper.ViewControllers.Comparison
 			_toolbar = new UIToolbar(new RectangleF(0, View.Frame.Height - 88, View.Frame.Width, 44));
 			_toolbar.TintColor = UIColor.DarkGray;
 			var toolbarItems = new List<UIBarButtonItem>();
-			var editButtonItem = new UIBarButtonItem("Change Base Unit", UIBarButtonItemStyle.Bordered, (sender, args) => 
-			{ 
-				OnModify.Fire(this, new EventArgs());
-			});
+			var editButtonItem = new UIBarButtonItem("Change Base Unit", UIBarButtonItemStyle.Bordered, (sender, args) => { OnModify.Fire(this, new EventArgs()); });
 			
 			_trashButton = new UIBarButtonItem(UIBarButtonSystemItem.Trash, (sender, args) =>
 			{
-
+				NavigationItem.RightBarButtonItem.Enabled = _tableView.Editing;
+				_tableView.SetEditing(!_tableView.Editing, true);
 			});
 			
 			toolbarItems.Add(editButtonItem);
@@ -56,6 +73,11 @@ namespace Cheaper.ViewControllers.Comparison
 			toolbarItems.Add(_trashButton);
 			_toolbar.SetItems(toolbarItems.ToArray(), false);
 			View.AddSubview(_toolbar);
+			
+			if(_tableView.Comparables.Count == 0)
+			{
+				_trashButton.Enabled = false;
+			}
 		}
 		
 		public override void ViewDidAppear(bool animated)
@@ -64,28 +86,14 @@ namespace Cheaper.ViewControllers.Comparison
 			if(_reloadOnAppeared)
 			{
 				_reloadOnAppeared = false;
-				
 				if(_tableView.Comparables.Count == 0)
 				{
 					return;
 				}
 				
 				// fade table out, reload data and fade back in
-				_tableView.Opaque = false;
-				UIView.Animate(0.4, () =>
-				{
-					_tableView.Alpha = 0; 
-				}, () =>
-				{
-					_tableView.Reset();
-					UIView.Animate(0.4, () => 
-					{
-						_tableView.Alpha = 1;
-					}, () =>
-					{
-						_tableView.Opaque = true;
-					});
-				});
+				_tableView.Reset(_comparison);
+				UIView.Animate(0.2, () => { _tableView.Alpha = 1; }, () => { _tableView.Opaque = true; });
 			}
 			else if(_comparableToAdd != null)
 			{
@@ -94,6 +102,11 @@ namespace Cheaper.ViewControllers.Comparison
 			}
 			
 			_tableView.DeselectSelectedRow();
+		}
+		
+		public void ReloadRowForComparable(int comparableId)
+		{
+			_tableView.ReloadRowForComparable(comparableId);
 		}
 		
 		public void AddComparable(ComparableModel comparable)
@@ -106,6 +119,13 @@ namespace Cheaper.ViewControllers.Comparison
 			_comparison = DataService.GetComparison(_comparison.Id);
 			Title = _comparison.Name;
 			_reloadOnAppeared = true;
+			_tableView.Opaque = false;
+			_tableView.Alpha = 0;
+		}
+		
+		public void EnableTrashButton()
+		{
+			_trashButton.Enabled = true;
 		}
 		
 		public ComparableModel GetSelectedComparable()

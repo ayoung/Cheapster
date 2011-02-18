@@ -2,7 +2,10 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
+using MonoTouch.Foundation;
 using Cheaper.ViewControllers.Shared;
+using Cheaper.Data;
+using Cheaper.Rules;
 
 using Cheaper.ViewControllers.Comparison;
 
@@ -12,6 +15,9 @@ namespace Cheaper
 	{
 		private ComparisonLineupTableView _tableView;
 		public event EventHandler OnComparableSelected;
+		private bool _deletingLastRow;
+		private const string _detailTextWithStore = "${0}/{1} @ {2}";
+		private const string _detailTextNoStore = "${0}/{1}";
 		
 		public ComparisonLineupTableViewSource(ComparisonLineupTableView tableView)
 		{
@@ -38,7 +44,7 @@ namespace Cheaper
 				return placeholderCell;
 			}
 			
-			string cellIdentifier = "";
+			string cellIdentifier = "ComparisonLineupCell";
 			
 			var cell = tableView.DequeueReusableCell(cellIdentifier) as ComparisonLineupTableViewCell;
 			if(cell == null) {
@@ -50,24 +56,54 @@ namespace Cheaper
 			var comparable = _tableView.Comparables[indexPath.Row];
 			
 			cell.TextLabel.Text = comparable.Product;
-			cell.Comparable = comparable;
-			
+			cell.DetailTextLabel.Text = string.Format(string.IsNullOrEmpty(comparable.Store) ? _detailTextNoStore : _detailTextWithStore, 
+				comparable.GetPricePerBaseUnit(_tableView.Comparison.UnitId).ToString("#.###"),
+				_tableView.Unit.Name,
+				comparable.Store);
+		
 			return cell;
 		}
 		
 		public override int RowsInSection(UITableView tableview, int section)
 		{
-			if(_tableView.Comparables == null || _tableView.Comparables.Count == 0)
+			if(!_deletingLastRow && (_tableView.Comparables == null || _tableView.Comparables.Count == 0))
 			{
 				return 1;
 			}
 			
+			_deletingLastRow = false;
 			return _tableView.Comparables.Count;
 		}
 		
 		public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 		{
 			OnComparableSelected.Fire(this, EventArgs.Empty);
+		}
+		
+		public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+		{
+			if(editingStyle != UITableViewCellEditingStyle.Delete)
+			{
+				return;
+			}
+			
+			var comparable = _tableView.Comparables[indexPath.Row];
+			if(!DataService.DeleteComparable(comparable.Id))
+			{
+				new UIAlertView("Info", "Comparable was not found. Could not delete.", null, "Dismiss").Show();
+			}
+			
+			if(!_tableView.Comparables.Remove(comparable))
+			{
+				new UIAlertView("Info", "Comparable was not found in the list. Could not delete.", null, "Dismiss").Show();
+			}
+			
+			if(_tableView.Comparables.Count == 0)
+			{
+				_deletingLastRow = true;
+			}
+			
+			_tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
 		}
 	}
 }

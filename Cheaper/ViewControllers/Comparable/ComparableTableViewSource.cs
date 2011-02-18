@@ -18,6 +18,11 @@ namespace Cheaper.ViewControllers.Comparable
 		public List<UITextField> TextFields { get; private set; }
 		private ComparableTableView _tableView;
 		private ComparableModel _comparable;
+		private EventedTableViewCell _productCell;
+		private EventedTableViewCell _storeCell;
+		private EventedTableViewCell _priceCell;
+		private EventedTableViewCell _quantityCell;
+		private EventedTableViewCell _unitCell;
 		public event EventHandler OnEditUnit;
 		public event EventHandler OnKeyboardDone;
 		
@@ -44,62 +49,82 @@ namespace Cheaper.ViewControllers.Comparable
 		
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
-			var cell = new EventedTableViewCell();
 			switch(indexPath.Row) {
 				case (0):
-					AddLabel(cell, "Product");
-					ProductText = AddTextField(cell, "or brand name (optional)", indexPath, () => { return PriceText; });
-					ProductText.Text = _comparable == null ? null : _comparable.Product;
-					ProductText.EditingChanged += (sender, args) => 
+					if(_productCell == null)
 					{
-						_tableView.FireOnProductNameChanged();
-					};
-					break;
+						_productCell = new EventedTableViewCell();
+						AddLabel(_productCell, "Product");
+						ProductText = AddTextField(_productCell, "or brand name (optional)", indexPath, () => { return PriceText; });
+						ProductText.Text = _comparable == null ? null : _comparable.Product;
+						ProductText.AutocapitalizationType = UITextAutocapitalizationType.Words;
+						ProductText.EditingChanged += (sender, args) => 
+						{
+							_tableView.FireOnProductNameChanged();
+						};
+					}
+					return _productCell;
 				case (1):
-					AddLabel(cell, "Store");
-					StoreText = AddTextField(cell, "store name (optional)", indexPath, () => { return ProductText; });
-					StoreText.Text = _comparable == null ? null : _comparable.Store;
-					break;
+					if(_storeCell == null)
+					{
+						_storeCell = new EventedTableViewCell();
+						AddLabel(_storeCell, "Store");
+						StoreText = AddTextField(_storeCell, "store name (optional)", indexPath, () => { return ProductText; });
+						StoreText.Text = _comparable == null ? null : _comparable.Store;
+						StoreText.AutocapitalizationType = UITextAutocapitalizationType.Words;
+					}
+					return _storeCell;
 				case (2):
-					AddLabel(cell, "Price");
-					PriceText = AddTextField(cell, "0.00", indexPath, () => { return QuantityText; });
-					PriceText.KeyboardType = UIKeyboardType.NumberPad;
-					var label = new UILabel(new RectangleF(0, 10, 9, 18));
-					label.TextColor = UIColor.LightGray;
-					label.Font = UIFont.FromName("Helvetica", 14);
-					label.Text = "$";
-					PriceText.LeftView = label;
-					PriceText.LeftViewMode = UITextFieldViewMode.Always;
-					PriceText.Text = _comparable == null ? null : _comparable.Price.ToString();
-					break;
+					if(_priceCell == null)
+					{
+						_priceCell = new EventedTableViewCell();
+						AddLabel(_priceCell, "Price");
+						PriceText = AddTextField(_priceCell, "0.00", indexPath, () => { return QuantityText; });
+						PriceText.KeyboardType = UIKeyboardType.DecimalPad;
+						var label = new UILabel(new RectangleF(0, 10, 9, 18));
+						label.TextColor = UIColor.LightGray;
+						label.Font = UIFont.FromName("Helvetica", 14);
+						label.Text = "$";
+						PriceText.LeftView = label;
+						PriceText.LeftViewMode = UITextFieldViewMode.Always;
+						PriceText.Text = _comparable == null ? null : _comparable.Price.ToString();
+					}
+					return _priceCell;
 				case (3):
-					AddLabel(cell, "Quantity");
-					QuantityText = AddTextField(cell, "quantity", indexPath, () => 
+					if(_quantityCell == null)
 					{
-						OnKeyboardDone.Fire(this, EventArgs.Empty);
-						return null;
-					});
-					QuantityText.KeyboardType = UIKeyboardType.NumberPad;
-					QuantityText.ReturnKeyType = UIReturnKeyType.Done;
-					QuantityText.Text = _comparable == null ? null : _comparable.Quantity.ToString();
-					break;
+						_quantityCell = new EventedTableViewCell();
+						AddLabel(_quantityCell, "Quantity");
+						QuantityText = AddTextField(_quantityCell, "quantity", indexPath, () => 
+						{
+							OnKeyboardDone.Fire(this, EventArgs.Empty);
+							return null;
+						});
+						QuantityText.KeyboardType = UIKeyboardType.DecimalPad;
+						QuantityText.ReturnKeyType = UIReturnKeyType.Done;
+						QuantityText.Text = _comparable == null ? null : _comparable.Quantity.ToString();
+					}
+					return _quantityCell;
 				case (4):
-					AddLabel(cell, "Unit");
-					UnitLabel = new UILabel(new RectangleF(0, 0, cell.Frame.Width - 115, 20));
-					UnitLabel.Center = new PointF(200, (cell.Frame.Height / 2));
-					UnitLabel.Font = UIFont.FromName("Helvetica", 14);
-					UnitLabel.TextColor = UIColor.DarkTextColor;
-					cell.AddSubview(UnitLabel);
-					cell.OnTouchesEnded += (sender, args) => 
+					if(_unitCell == null)
 					{
-						ActiveIndexPath = indexPath;
-						OnEditUnit.Fire(this, EventArgs.Empty);
-					};
-					break;
+						_unitCell = new EventedTableViewCell();
+						AddLabel(_unitCell, "Unit");
+						UnitLabel = new UILabel(new RectangleF(0, 0, _unitCell.Frame.Width - 115, 20));
+						UnitLabel.Center = new PointF(200, (_unitCell.Frame.Height / 2));
+						UnitLabel.Font = UIFont.FromName("Helvetica", 14);
+						UnitLabel.TextColor = UIColor.DarkTextColor;
+						_unitCell.AddSubview(UnitLabel);
+						_unitCell.OnTouchesEnded += (sender, args) => 
+						{
+							ActiveIndexPath = indexPath;
+							OnEditUnit.Fire(this, EventArgs.Empty);
+						};
+					}
+					return _unitCell;
 				default:
 					throw new ArgumentException("Invalid row index: " + indexPath.Row);
 			}
-			return cell;
 		}
 		
 		private UILabel AddLabel(EventedTableViewCell cell, string text)

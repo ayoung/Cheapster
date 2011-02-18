@@ -7,6 +7,7 @@ namespace Cheaper.Data.Models
 		public int UnitTypeId { get; set; }
 		public string Name { get; set; }
 		public string FullName { get; set; }
+		public double Multiplier { get; set; }
 	}
 }
 

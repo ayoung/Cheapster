@@ -59,6 +59,7 @@ namespace Cheaper.ViewControllers
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.ComparisonId);
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
+						_comparisonLineupViewController.EnableTrashButton();
 						_comparisonLineupViewController.AddComparable(_comparableViewController.Comparable);
 						DismissModalViewControllerAnimated(true);
 						_comparableViewController = null;
@@ -77,7 +78,8 @@ namespace Cheaper.ViewControllers
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.GetSelectedComparable());
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
-						_comparisonLineupViewController.ReloadOnAppeared();
+						//_comparisonLineupViewController.ReloadOnAppeared();
+						_comparisonLineupViewController.ReloadRowForComparable(_comparisonLineupViewController.GetSelectedComparable().Id);
 						PopViewControllerAnimated(true);
 						_comparableViewController = null;
 					};
@@ -89,6 +91,7 @@ namespace Cheaper.ViewControllers
 					PushViewController(_comparableViewController, true);
 				};
 				
+				// edit comparison
 				_comparisonLineupViewController.OnModify += (sender_, args_) =>
 				{
 					_comparisonViewController = new ComparisonViewController(_homeListViewController.SelectedComparison);

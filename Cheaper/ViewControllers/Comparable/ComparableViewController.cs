@@ -131,14 +131,14 @@ namespace Cheaper.ViewControllers.Comparable
 		
 		public bool ValidateData()
 		{
-			if(_tableView.Price == null || !_moneyRegex.IsMatch(_tableView.Price))
+			if(string.IsNullOrEmpty(_tableView.Price) || !_moneyRegex.IsMatch(_tableView.Price))
 			{
 				new UIAlertView("Invalid Price", "Enter a proper monetary amount", null, "ok").Show();
 				return false;
 			}
 
 			double d;
-			if(_tableView.Quantity == null || !double.TryParse(_tableView.Quantity, out d))
+			if(string.IsNullOrEmpty(_tableView.Quantity) || !double.TryParse(_tableView.Quantity, out d))
 			{
 				new UIAlertView("Invalid Quantity", "Enter a numeric quantatative value", null, "ok").Show();
 				return false;
@@ -168,7 +168,7 @@ namespace Cheaper.ViewControllers.Comparable
 				NavigationController.SetNavigationBarHidden(false, false);
 				NavigationItem.RightBarButtonItem = GetDoneButton();
 				_navigationItem = NavigationItem;
-				Title = Comparable.Product;
+				Title = string.IsNullOrEmpty(Comparable.Product) ? "Product" : Comparable.Product;
 			}
 		}
 		

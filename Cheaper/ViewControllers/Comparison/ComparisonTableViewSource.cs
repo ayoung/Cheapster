@@ -40,7 +40,8 @@ namespace Cheaper.ViewControllers.Comparison
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
 			EventedTableViewCell cell;
-			switch(indexPath.Row) {
+			switch(indexPath.Row)
+			{
 				case (0):
 					cell = new EventedTableViewCell();
 					AddLabel(cell, "Name");
@@ -54,6 +55,7 @@ namespace Cheaper.ViewControllers.Comparison
 						OnNameChanged.Fire(this, EventArgs.Empty);
 					};
 					ComparisonNameText.ReturnKeyType = UIReturnKeyType.Done;
+					ComparisonNameText.AutocapitalizationType = UITextAutocapitalizationType.Words;
 					break;
 				case (1):
 					cell = new EventedTableViewCell();

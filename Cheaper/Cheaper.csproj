@@ -14,7 +14,7 @@
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleIdentifier>com.andrewdyoung.cheaper</BundleIdentifier>
-    <BundleVersion>0.1</BundleVersion>
+    <BundleVersion>0.2</BundleVersion>
     <BundleDisplayName>Cheaper</BundleDisplayName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
@@ -124,6 +124,7 @@
     <Compile Include="ViewControllers\Comparison\ComparisonTableViewSource.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonViewController.cs" />
     <Compile Include="ViewControllers\AboutViewController.cs" />
+    <Compile Include="Rules\ComparableExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xib" />
@@ -146,6 +147,7 @@
     <Folder Include="ViewControllers\Comparable\" />
     <Folder Include="Data\Models\" />
     <Folder Include="ViewControllers\Shared\" />
+    <Folder Include="Rules\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Database\Cheaper.db3">

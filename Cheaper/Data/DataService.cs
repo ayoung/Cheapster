@@ -183,14 +183,31 @@ namespace Cheaper.Data
 			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
 		}
 		
+		/// <summary>
+		/// Deletes a comparable with the given id.
+		/// </summary>
+		/// <param name="id">
+		/// The comparable to delete.
+		/// </param>
+		/// <returns>
+		/// A value whether a comparable has been deleted. False if nothing was deleted.
+		/// </returns>
+		public static bool DeleteComparable(int id)
+		{
+			var commandText = "delete from Comparable where Id = @Id;";
+			var parameters = new Dictionary<string, object>();
+			parameters.Add("@Id", id);
+			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
+		}
+		
 		private static ComparableModel CreateComparable(SqliteDataReader reader)
 		{
 			return new ComparableModel() {
 						Id = reader.GetInt32(0),
 						ComparisonId = reader.GetInt32(1),
 						UnitId = reader.GetInt32(2),
-						Store = reader.GetString(3),
-						Product = reader.GetString(4),
+						Store = reader.IsDBNull(3) ? null : reader.GetString(3),
+						Product = reader.IsDBNull(4) ? null : reader.GetString(4),
 						Price = reader.GetDouble(5),
 						Quantity = reader.GetDouble(6)
 					};
@@ -203,7 +220,7 @@ namespace Cheaper.Data
 		public static List<UnitModel> GetUnits(int unitTypeId)
 		{
 			var units = new List<UnitModel>();
-			var commandText = "select Id, UnitTypeId, Name, FullName from Unit where UnitTypeId = @UnitTypeId;";
+			var commandText = "select Id, UnitTypeId, Name, FullName, Multiplier from Unit where UnitTypeId = @UnitTypeId;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@UnitTypeId", unitTypeId);
 			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) =>
@@ -213,7 +230,28 @@ namespace Cheaper.Data
 						Id = reader.GetInt32(0),
 						UnitTypeId = reader.GetInt32(1),
 						Name = reader.GetString(2),
-						FullName = reader.GetString(3)
+						FullName = reader.GetString(3),
+						Multiplier = reader.GetDouble(4)
+					});
+				}
+			});
+			
+			return units;
+		}
+
+		public static List<UnitModel> GetUnits()
+		{
+			var units = new List<UnitModel>();
+			var commandText = "select Id, UnitTypeId, Name, FullName, Multiplier from Unit;";
+			SqlConnection.ReaderWithCommand(commandText, (reader) =>
+			{
+				while(reader.Read()) {
+					units.Add(new UnitModel() {
+						Id = reader.GetInt32(0),
+						UnitTypeId = reader.GetInt32(1),
+						Name = reader.GetString(2),
+						FullName = reader.GetString(3),
+						Multiplier = reader.GetDouble(4)
 					});
 				}
 			});

@@ -13,8 +13,6 @@ namespace Cheaper.ViewControllers.Comparison
 		{
 		
 		}
-		
-		public ComparableModel Comparable { get; set; }
 	}
 }
 
