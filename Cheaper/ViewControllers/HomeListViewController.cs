@@ -32,7 +32,7 @@ namespace Cheaper.ViewControllers
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			Title = "*Cheaper*";
+			Title = "Cheaper*";
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
 			{

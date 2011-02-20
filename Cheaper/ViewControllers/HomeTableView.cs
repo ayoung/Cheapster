@@ -48,7 +48,7 @@ namespace Cheaper.ViewControllers
 		
 		private void Reset()
 		{
-			Comparisons = DataService.GetComparisons();
+			Comparisons = DataService.GetComparisons().OrderBy(c => c.Name).ToList();
 			SetScrollAndSelection();
 		}
 		
@@ -65,13 +65,7 @@ namespace Cheaper.ViewControllers
 				ScrollEnabled = true;
 			}
 		}
-		
-		public override void ReloadData()
-		{
-			Reset();
-			base.ReloadData();
-		}
-		
+				
 		public override void DeleteRows(NSIndexPath[] atIndexPaths, UITableViewRowAnimation withRowAnimation)
 		{
 			base.DeleteRows(atIndexPaths, withRowAnimation);
@@ -125,8 +119,9 @@ namespace Cheaper.ViewControllers
 			else
 			{
 				Comparisons.Add(comparison);
+				Comparisons = Comparisons.OrderBy(c => c.Name).ToList();
 				BeginUpdates();
-				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(Comparisons.Count - 1, 0) }, UITableViewRowAnimation.Fade);
+				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(Comparisons.IndexOf(comparison), 0) }, UITableViewRowAnimation.Fade);
 				EndUpdates();
 			}
 			SetScrollAndSelection();

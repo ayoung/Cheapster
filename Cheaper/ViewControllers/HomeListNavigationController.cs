@@ -53,7 +53,7 @@ namespace Cheaper.ViewControllers
 			{
 				_comparisonLineupViewController = new ComparisonLineupViewController(_homeListViewController.SelectedComparison);
 				
-				// go to new comparable view if add button is touched
+				// new comparable
 				_comparisonLineupViewController.OnAddComparable += (sender_, args_) =>
 				{
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.ComparisonId);
@@ -72,14 +72,13 @@ namespace Cheaper.ViewControllers
 					PresentModalViewController(_comparableViewController, true);
 				};
 				
-				// go to edit comparable view when a comparable is selected
+				// edit comparable
 				_comparisonLineupViewController.OnComparableSelected += (sender_, args_) =>
 				{
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.GetSelectedComparable());
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
-						//_comparisonLineupViewController.ReloadOnAppeared();
-						_comparisonLineupViewController.ReloadRowForComparable(_comparisonLineupViewController.GetSelectedComparable().Id);
+						_comparisonLineupViewController.RepositionRowForComparable(_comparisonLineupViewController.GetSelectedComparable().Id);
 						PopViewControllerAnimated(true);
 						_comparableViewController = null;
 					};
@@ -107,6 +106,11 @@ namespace Cheaper.ViewControllers
 						DismissModalViewControllerAnimated(true);
 					};
 					PresentModalViewController(_comparisonViewController, true);
+				};
+				
+				_comparisonLineupViewController.OnNewCheaper += (sender__, args__) =>
+				{
+					_homeListViewController.ReloadRowForComparison(_comparisonLineupViewController.ComparisonId);
 				};
 				
 				PushViewController(_comparisonLineupViewController, true);

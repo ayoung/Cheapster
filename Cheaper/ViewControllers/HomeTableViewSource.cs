@@ -5,6 +5,7 @@ using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using Cheaper.Data;
 using Cheaper.Data.Models;
+using Cheaper.Rules;
 
 namespace Cheaper.ViewControllers
 {
@@ -87,6 +88,22 @@ namespace Cheaper.ViewControllers
 			var comparison = _tableView.Comparisons[indexPath.Row];
 			
 			cell.TextLabel.Text = comparison.Name;
+			//Comparison.Summary = 
+			//Comparison.Summary = string.Format("Cheaper at {0} for {1}/{2}", comparable.Store, comparable.GetPricePerBaseUnit(Comparison.UnitId).ToString("0.000"), Unit.Name);
+			Console.WriteLine(comparison.CheapestComparableId.HasValue);
+			Console.WriteLine(comparison.Name);
+			if(comparison.CheapestComparableId != null)
+			{
+				if(!string.IsNullOrEmpty(comparison.CheapestStore))
+				{
+					
+					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1} @ {2}", comparison.GetPricePerBaseUnit().ToString("0.###"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name, comparison.CheapestStore);
+				}
+				else
+				{
+					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1}", comparison.GetPricePerBaseUnit().ToString("0.###"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name);
+				}
+			}
 			cell.Comparison = comparison;
 			return cell;
 		}

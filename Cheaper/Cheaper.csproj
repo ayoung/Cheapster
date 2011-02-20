@@ -14,8 +14,10 @@
     <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleIdentifier>com.andrewdyoung.cheaper</BundleIdentifier>
-    <BundleVersion>0.2</BundleVersion>
+    <BundleVersion>0.3</BundleVersion>
     <BundleDisplayName>Cheaper</BundleDisplayName>
+    <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
+    <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,6 +87,8 @@
   <ItemGroup>
     <None Include="Info.plist" />
     <None Include="Content\Database\Cheaper.sql" />
+    <None Include="Content\Icons\iPhone.png" />
+    <None Include="Content\Icons\iPhone4.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.xib.designer.cs">
@@ -124,7 +128,7 @@
     <Compile Include="ViewControllers\Comparison\ComparisonTableViewSource.cs" />
     <Compile Include="ViewControllers\Comparison\ComparisonViewController.cs" />
     <Compile Include="ViewControllers\AboutViewController.cs" />
-    <Compile Include="Rules\ComparableExtensions.cs" />
+    <Compile Include="Rules\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xib" />
@@ -148,6 +152,7 @@
     <Folder Include="Data\Models\" />
     <Folder Include="ViewControllers\Shared\" />
     <Folder Include="Rules\" />
+    <Folder Include="Content\Icons\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Database\Cheaper.db3">

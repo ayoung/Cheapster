@@ -42,7 +42,7 @@ namespace Cheaper.ViewControllers.Comparison
 			// add navigation item
 			View.BackgroundColor = UIColor.GroupTableViewBackgroundColor;
 			var navigationBar = new UINavigationBar(new RectangleF(0, 0, View.Frame.Width, 44));
-			navigationBar.TintColor = UIColor.DarkGray;
+			//navigationBar.TintColor = UIColor.DarkGray;
 			var navigationItem = new UINavigationItem(Comparison == null ? "New Comparison" : Comparison.Name);
 			var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, (sender, args) =>
 			{

@@ -14,12 +14,14 @@ namespace Cheaper.ViewControllers.Comparison
 		public event EventHandler OnAddComparable;
 		public event EventHandler OnComparableSelected;
 		public event EventHandler OnModify;
+		public event EventHandler OnNewCheaper;
 		private ComparisonLineupTableView _tableView;
 		private UIToolbar _toolbar;
 		private ComparisonModel _comparison;
 		private UIBarButtonItem _trashButton;
 		private ComparableModel _comparableToAdd;
 		private bool _reloadOnAppeared;
+		private int? _comparableIdToReposition;
 		
 		public ComparisonLineupViewController(ComparisonModel comparison)
 		{
@@ -53,6 +55,10 @@ namespace Cheaper.ViewControllers.Comparison
 					NavigationItem.RightBarButtonItem.Enabled = true;
 					_tableView.SetEditing(false, true);
 				}
+			};
+			_tableView.OnNewCheaper += (sender, args) => 
+			{
+				OnNewCheaper.Fire(this, EventArgs.Empty);
 			};
 			
 			View.AddSubview(_tableView);
@@ -101,12 +107,18 @@ namespace Cheaper.ViewControllers.Comparison
 				_comparableToAdd = null;
 			}
 			
+			if(_comparableIdToReposition.HasValue)
+			{
+				_tableView.RepositionRowForComparable(_comparableIdToReposition.Value);
+				_comparableIdToReposition = null;
+			}
+			
 			_tableView.DeselectSelectedRow();
 		}
 		
-		public void ReloadRowForComparable(int comparableId)
+		public void RepositionRowForComparable(int comparableId)
 		{
-			_tableView.ReloadRowForComparable(comparableId);
+			_comparableIdToReposition = comparableId;
 		}
 		
 		public void AddComparable(ComparableModel comparable)

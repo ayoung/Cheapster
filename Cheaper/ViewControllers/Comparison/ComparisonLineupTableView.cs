@@ -7,6 +7,7 @@ using MonoTouch.Foundation;
 using Cheaper.Data;
 using Cheaper.Data.Models;
 using Cheaper.ViewControllers.Shared;
+using Cheaper.Rules;
 
 namespace Cheaper.ViewControllers.Comparison
 {
@@ -18,6 +19,7 @@ namespace Cheaper.ViewControllers.Comparison
 		public UnitModel Unit { get; private set; }
 		public event EventHandler OnComparableSelected;
 		public event EventHandler OnComparableDeleted;
+		public event EventHandler OnNewCheaper;
 		private ComparisonLineupTableViewSource _source;
 		
 		public ComparisonLineupTableView(ComparisonModel comparison, RectangleF frame, UITableViewStyle style) : base(frame, style)
@@ -41,16 +43,30 @@ namespace Cheaper.ViewControllers.Comparison
 			if(Comparables.Count == 0)
 			{
 				Comparables.Add(comparable);
+				UpdateCheapestComparable(comparable);
 				ReloadRows(new NSIndexPath[] { NSIndexPath.FromRowSection(0, 0) }, UITableViewRowAnimation.Fade);
 			}
 			else
 			{
 				Comparables.Add(comparable);
+				Comparables = Comparables.OrderBy(c => c.GetPricePerBaseUnit(Comparison.UnitId)).ToList();
+				var addedAt = Comparables.IndexOf(comparable);
+				if(addedAt == 0)
+				{
+					UpdateCheapestComparable(comparable);
+				}
 				BeginUpdates();
-				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(Comparables.Count - 1, 0) }, UITableViewRowAnimation.Fade);
+				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(addedAt, 0) }, UITableViewRowAnimation.Fade);
 				EndUpdates();
 			}
 			SetScrollAndSelection();
+		}
+		
+		public void UpdateCheapestComparable(ComparableModel comparable)
+		{
+			Comparison.CheapestComparableId = comparable == null ? (int?)null : comparable.Id;
+			DataService.UpdateComparison(Comparison);
+			OnNewCheaper.Fire(this, EventArgs.Empty);
 		}
 		
 		public override void DeleteRows(NSIndexPath[] atIndexPaths, UITableViewRowAnimation withRowAnimation)
@@ -64,9 +80,14 @@ namespace Cheaper.ViewControllers.Comparison
 			}
 			
 			OnComparableDeleted.Fire(this, EventArgs.Empty);
+			
+			if(atIndexPaths[0].Row == 0)
+			{
+				UpdateCheapestComparable(Comparables.Count == 0 ? null : Comparables[0]);
+			}
 		}
-
-		public void ReloadRowForComparable(int comparableId)
+		
+		public void RepositionRowForComparable(int comparableId)
 		{
 			var comparable = (from c in Comparables
 				where c.Id == comparableId
@@ -76,18 +97,41 @@ namespace Cheaper.ViewControllers.Comparison
 			{
 				return;
 			}
-		
+			
+			// refresh the comparable object
 			var index = Comparables.IndexOf(comparable);
-			Comparables[index] = DataService.GetComparable(comparableId);
-			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) };
-			ReloadRows(indexPaths, UITableViewRowAnimation.None);
-			SelectRow(indexPaths[0], false, UITableViewScrollPosition.None);
+			var refreshedComparable = DataService.GetComparable(comparableId);
+			Comparables[index] = refreshedComparable;
+			
+			// reorder the list again
+			Comparables = Comparables.OrderBy(c => c.GetPricePerBaseUnit(Comparison.UnitId)).ToList();
+			
+			// get the new index of the comparable
+			var newIndex = Comparables.IndexOf(refreshedComparable);
+			
+			if(newIndex == index)
+			{
+				var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) };
+				ReloadRows(indexPaths, UITableViewRowAnimation.None);
+				SelectRow(indexPaths[0], false, UITableViewScrollPosition.None);
+			}
+			else
+			{
+				BeginUpdates();
+				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(newIndex, 0) }, UITableViewRowAnimation.Fade);
+				DeleteRows(new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) }, UITableViewRowAnimation.Fade);
+				EndUpdates();
+				if(newIndex == 0)
+				{
+					UpdateCheapestComparable(refreshedComparable);
+				}
+			}
 		}
 		
 		public void Reset(ComparisonModel comparison)
 		{
 			Comparison = comparison;
-			Comparables = DataService.GetComparables(Comparison.Id);
+			Comparables = DataService.GetComparables(Comparison.Id).OrderBy(c => c.GetPricePerBaseUnit(comparison.UnitId)).ToList();
 			SetScrollAndSelection();
 			UnitMap = (from u in DataService.GetUnits(Comparison.UnitTypeId)
 				select u).ToDictionary(u => u.Id, u => u);

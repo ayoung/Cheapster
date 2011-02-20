@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Mono.Data.Sqlite;
 using Cheaper.Data.Models;
@@ -9,13 +10,14 @@ namespace Cheaper.Data
 	public static class DataService
 	{
 		private const string _lastRowId = "select last_insert_rowid();";
+		private const string _selectComparison = "select c.Id, c.UnitTypeId, c.UnitId, c.CategoryId, c.Name, cc.Store, cc.Price, cc.Quantity, cc.UnitId, cc.Id from Comparison c left outer join Comparable cc on c.CheapestComparableId = cc.Id";
 		
 		#region Comparison
 		
 		public static List<ComparisonModel> GetComparisons()
 		{
 			var comparisons = new List<ComparisonModel>();
-			var commandText = "select Id, UnitTypeId, UnitId, CategoryId, Name from Comparison order by Name;";
+			var commandText = _selectComparison + ";";
 			SqlConnection.ReaderWithCommand(commandText, (reader) =>
 			{
 				while(reader.Read()) {
@@ -28,7 +30,7 @@ namespace Cheaper.Data
 		
 		public static ComparisonModel GetComparison(int id)
 		{
-			var commandText = "select Id, UnitTypeId, UnitId, CategoryId, Name from Comparison where Id = @Id;";
+			var commandText = _selectComparison + " where c.Id = @Id;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@Id", id);
 			ComparisonModel comparison = null;
@@ -67,13 +69,14 @@ namespace Cheaper.Data
 				throw new ArgumentException("Comparison with non-zero id cannot be saved.");
 			}
 			
-			var commandText = "insert into Comparison (UnitTypeId, UnitId, Name) values (@UnitTypeId, @UnitId, @Name);";
+			var commandText = "insert into Comparison (UnitTypeId, UnitId, Name, CheapestComparableId) values (@UnitTypeId, @UnitId, @Name, @CheapestComparableId);";
 			commandText += "select last_insert_rowid();";
 			
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@UnitTypeId", comparison.UnitTypeId);
 			parameters.Add("@Name", comparison.Name);
 			parameters.Add("@UnitId", comparison.UnitId);
+			parameters.Add("@CheapestComparableId", comparison.CheapestComparableId);
 			
 			int newId = 0;
 
@@ -85,12 +88,13 @@ namespace Cheaper.Data
 		
 		public static bool UpdateComparison(ComparisonModel comparison)
 		{
-			var commandText = "update Comparison set UnitTypeId=@UnitTypeId, UnitId=@UnitId, Name=@Name where Id=@Id;";
+			var commandText = "update Comparison set UnitTypeId=@UnitTypeId, UnitId=@UnitId, CheapestComparableId=@CheapestComparableId, Name=@Name where Id=@Id;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@UnitTypeId", comparison.UnitTypeId);
 			parameters.Add("@Name", comparison.Name);
 			parameters.Add("@UnitId", comparison.UnitId);
 			parameters.Add("@Id", comparison.Id);
+			parameters.Add("@CheapestComparableId", comparison.CheapestComparableId);
 			
 			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
 		}
@@ -98,12 +102,17 @@ namespace Cheaper.Data
 		private static ComparisonModel CreateComparison(SqliteDataReader reader)
 		{
 			return new ComparisonModel { 
-						Id = reader.GetInt32(0),
-						UnitTypeId = reader.GetInt32(1),
-						UnitId = reader.GetInt32(2),
-						//CategoryId = reader.GetInt32(3),
-						Name = reader.IsDBNull(4) ? null : reader.GetString(4)
-					};
+				Id = reader.GetInt32(0),
+				UnitTypeId = reader.GetInt32(1),
+				UnitId = reader.GetInt32(2),
+				//CategoryId = reader.GetInt32(3),
+				Name = reader.IsDBNull(4) ? null : reader.GetString(4),
+				CheapestStore = reader.IsDBNull(5) ? null : reader.GetString(5),
+				CheapestPrice = reader.IsDBNull(6) ? (double?)null : reader.GetDouble(6),
+				CheapestQuantity = reader.IsDBNull(7) ? (double?)null : reader.GetDouble(7),
+				CheapestUnitId = reader.IsDBNull(8) ? (int?)null : reader.GetInt32(8),
+				CheapestComparableId = reader.IsDBNull(9) ? (int?)null : reader.GetInt32(9)
+			};
 		}
 		
 		#endregion
@@ -145,6 +154,11 @@ namespace Cheaper.Data
 		
 		public static int SaveComparable(ComparableModel comparable)
 		{
+			if(comparable.Id != 0)
+			{
+				throw new ArgumentException("Comparable with non-zero id cannot be saved.");
+			}
+			
 			var commandText = "insert into Comparable (ComparisonId, UnitId, Store, Product, Price, Quantity) values (@ComparisonId, @UnitId, @Store, @Product, @Price, @Quantity);";
 			commandText += "select last_insert_rowid();";
 			var parameters = new Dictionary<string, object>();
@@ -173,8 +187,9 @@ namespace Cheaper.Data
 		/// </returns>
 		public static bool UpdateComparable(ComparableModel comparable)
 		{
-			var commandText = "update Comparable set UnitId=@UnitId, Store=@Store, Product=@Product, Price=@Price, Quantity=@Quantity;";
+			var commandText = "update Comparable set UnitId=@UnitId, Store=@Store, Product=@Product, Price=@Price, Quantity=@Quantity where Id=@Id;";
 			var parameters = new Dictionary<string, object>();
+			parameters.Add("@Id", comparable.Id);
 			parameters.Add("@UnitId", comparable.UnitId);
 			parameters.Add("@Store", comparable.Store);
 			parameters.Add("@Product", comparable.Product);
@@ -238,15 +253,22 @@ namespace Cheaper.Data
 			
 			return units;
 		}
-
+		
+		private static List<UnitModel> _units;
+		
 		public static List<UnitModel> GetUnits()
 		{
-			var units = new List<UnitModel>();
+			if(_units != null)
+			{
+				return _units;
+			}	
+			
+			_units = new List<UnitModel>();
 			var commandText = "select Id, UnitTypeId, Name, FullName, Multiplier from Unit;";
 			SqlConnection.ReaderWithCommand(commandText, (reader) =>
 			{
 				while(reader.Read()) {
-					units.Add(new UnitModel() {
+					_units.Add(new UnitModel() {
 						Id = reader.GetInt32(0),
 						UnitTypeId = reader.GetInt32(1),
 						Name = reader.GetString(2),
@@ -256,7 +278,12 @@ namespace Cheaper.Data
 				}
 			});
 			
-			return units;
+			return _units;
+		}
+		
+		public static Dictionary<int, UnitModel> GetUnitsAsDictionary()
+		{
+			return (from u in DataService.GetUnits() select u).ToDictionary(u => u.Id, u => u);
 		}
 		
 		#endregion

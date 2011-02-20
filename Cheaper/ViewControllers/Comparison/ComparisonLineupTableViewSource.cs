@@ -57,7 +57,7 @@ namespace Cheaper
 			
 			cell.TextLabel.Text = comparable.Product;
 			cell.DetailTextLabel.Text = string.Format(string.IsNullOrEmpty(comparable.Store) ? _detailTextNoStore : _detailTextWithStore, 
-				comparable.GetPricePerBaseUnit(_tableView.Comparison.UnitId).ToString("#.###"),
+				comparable.GetPricePerBaseUnit(_tableView.Comparison.UnitId).ToString("0.###"),
 				_tableView.Unit.Name,
 				comparable.Store);
 		

@@ -186,6 +186,15 @@ namespace Cheaper.ViewControllers.Comparable
 			base.ViewWillAppear(animated);
 			ConfigureNavigationBar();
 			
+			if(Comparable != null)
+			{
+				_unitPicker.SetSelectedUnit(Comparable.UnitId);
+			}
+			else
+			{
+				_unitPicker.SetSelectedUnit(Comparison.UnitId);
+			}
+			
 			_keyboardShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.DidShowNotification, (notification) => {
 				var keyboardBounds = (NSValue)notification.UserInfo.ObjectForKey(UIKeyboard.BoundsUserInfoKey);
 				var keyboardSize = keyboardBounds.RectangleFValue;
