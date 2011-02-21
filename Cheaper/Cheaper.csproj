@@ -11,13 +11,15 @@
     <RootNamespace>Cheaper</RootNamespace>
     <MainNibFile>MainWindow.xib</MainNibFile>
     <AssemblyName>Cheaper</AssemblyName>
-    <MtouchMinimumOS>3.0</MtouchMinimumOS>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleIdentifier>com.andrewdyoung.cheaper</BundleIdentifier>
-    <BundleVersion>0.3</BundleVersion>
+    <BundleVersion>0.31</BundleVersion>
     <BundleDisplayName>Cheaper</BundleDisplayName>
     <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
     <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
+    <SupportedDevices>IPhoneAndIPad</SupportedDevices>
+    <MainNibFileIPad>MainWindow.xib</MainNibFileIPad>
+    <MtouchMinimumOS>3.2</MtouchMinimumOS>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
