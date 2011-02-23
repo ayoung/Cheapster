@@ -104,6 +104,10 @@ namespace Cheaper.ViewControllers
 					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1}", comparison.GetPricePerBaseUnit().ToString("0.###"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name);
 				}
 			}
+			else
+			{
+				cell.DetailTextLabel.Text = null;
+			}
 			cell.Comparison = comparison;
 			return cell;
 		}
