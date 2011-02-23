@@ -97,11 +97,11 @@ namespace Cheaper.ViewControllers
 				if(!string.IsNullOrEmpty(comparison.CheapestStore))
 				{
 					
-					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1} @ {2}", comparison.GetPricePerBaseUnit().ToString("0.###"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name, comparison.CheapestStore);
+					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1} @ {2}", comparison.GetPricePerBaseUnit().ToString("0.00#"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name, comparison.CheapestStore);
 				}
 				else
 				{
-					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1}", comparison.GetPricePerBaseUnit().ToString("0.###"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name);
+					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1}", comparison.GetPricePerBaseUnit().ToString("0.00#"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name);
 				}
 			}
 			else

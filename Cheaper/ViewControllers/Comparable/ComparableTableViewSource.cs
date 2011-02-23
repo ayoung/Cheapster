@@ -55,7 +55,7 @@ namespace Cheaper.ViewControllers.Comparable
 					{
 						_productCell = new EventedTableViewCell();
 						AddLabel(_productCell, "Product");
-						ProductText = AddTextField(_productCell, "or brand name (optional)", indexPath, () => { return PriceText; });
+						ProductText = AddTextField(_productCell, "or brand name (optional)", indexPath, () => { return StoreText; });
 						ProductText.Text = _comparable == null ? null : _comparable.Product;
 						ProductText.AutocapitalizationType = UITextAutocapitalizationType.Words;
 						ProductText.EditingChanged += (sender, args) => 
@@ -69,7 +69,7 @@ namespace Cheaper.ViewControllers.Comparable
 					{
 						_storeCell = new EventedTableViewCell();
 						AddLabel(_storeCell, "Store");
-						StoreText = AddTextField(_storeCell, "store name (optional)", indexPath, () => { return ProductText; });
+						StoreText = AddTextField(_storeCell, "store name (optional)", indexPath, () => { return PriceText; });
 						StoreText.Text = _comparable == null ? null : _comparable.Store;
 						StoreText.AutocapitalizationType = UITextAutocapitalizationType.Words;
 					}
