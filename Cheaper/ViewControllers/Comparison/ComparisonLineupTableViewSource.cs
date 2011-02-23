@@ -18,6 +18,7 @@ namespace Cheaper
 		private bool _deletingLastRow;
 		private const string _detailTextWithStore = "${0}/{1} @ {2}";
 		private const string _detailTextNoStore = "${0}/{1}";
+		private const string _productFormat = "{0} ({1} {2})";
 		
 		public ComparisonLineupTableViewSource(ComparisonLineupTableView tableView)
 		{
@@ -51,11 +52,13 @@ namespace Cheaper
 				// No re-usable cell found, create a new one
 				cell = new ComparisonLineupTableViewCell(UITableViewCellStyle.Subtitle, cellIdentifier);
 				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+				cell.TextLabel.AdjustsFontSizeToFitWidth = true;
+				cell.TextLabel.MinimumFontSize = 10;
 			}
 
 			var comparable = _tableView.Comparables[indexPath.Row];
 			
-			cell.TextLabel.Text = comparable.Product;
+			cell.TextLabel.Text = string.Format(_productFormat, comparable.Product, comparable.Quantity.ToString("#.#"), DataService.GetUnitsAsDictionary()[comparable.UnitId].Name);
 			cell.DetailTextLabel.Text = string.Format(string.IsNullOrEmpty(comparable.Store) ? _detailTextNoStore : _detailTextWithStore, 
 				comparable.GetPricePerBaseUnit(_tableView.Comparison.UnitId).ToString("0.00#"),
 				_tableView.Unit.Name,

@@ -122,7 +122,7 @@ namespace Cheaper.Data
 		public static List<ComparableModel> GetComparables(int comparisonId)
 		{
 			var comparables = new List<ComparableModel>();
-			var commandText = "select Id, ComparisonId, UnitId, Store, Product, Price, Quantity from Comparable where ComparisonId = @ComparisonId;";
+			var commandText = "select Id, ComparisonId, UnitId, Store, Product, Price, Quantity, ModifiedOn from Comparable where ComparisonId = @ComparisonId;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@ComparisonId", comparisonId);
 			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) =>
@@ -137,7 +137,7 @@ namespace Cheaper.Data
 		
 		public static ComparableModel GetComparable(int id)
 		{
-			var commandText = "select Id, ComparisonId, UnitId, Store, Product, Price, Quantity from Comparable where Id=@Id;";
+			var commandText = "select Id, ComparisonId, UnitId, Store, Product, Price, Quantity, ModifiedOn from Comparable where Id=@Id;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@Id", id);
 			ComparableModel comparable = null;
@@ -159,7 +159,8 @@ namespace Cheaper.Data
 				throw new ArgumentException("Comparable with non-zero id cannot be saved.");
 			}
 			
-			var commandText = "insert into Comparable (ComparisonId, UnitId, Store, Product, Price, Quantity) values (@ComparisonId, @UnitId, @Store, @Product, @Price, @Quantity);";
+			comparable.ModifiedOn = DateTime.Now;
+			var commandText = "insert into Comparable (ComparisonId, UnitId, Store, Product, Price, Quantity, ModifiedOn) values (@ComparisonId, @UnitId, @Store, @Product, @Price, @Quantity, @ModifiedOn);";
 			commandText += "select last_insert_rowid();";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@ComparisonId", comparable.ComparisonId);
@@ -168,6 +169,7 @@ namespace Cheaper.Data
 			parameters.Add("@Product", comparable.Product);
 			parameters.Add("@Price", comparable.Price);
 			parameters.Add("@Quantity", comparable.Quantity);
+			parameters.Add("@ModifiedOn", comparable.ModifiedOn);
 			
 			int newId = 0;
 			SqlConnection.ReaderWithCommand(commandText, parameters, (reader) => {
@@ -187,7 +189,8 @@ namespace Cheaper.Data
 		/// </returns>
 		public static bool UpdateComparable(ComparableModel comparable)
 		{
-			var commandText = "update Comparable set UnitId=@UnitId, Store=@Store, Product=@Product, Price=@Price, Quantity=@Quantity where Id=@Id;";
+			comparable.ModifiedOn = DateTime.Now;
+			var commandText = "update Comparable set UnitId=@UnitId, Store=@Store, Product=@Product, Price=@Price, Quantity=@Quantity, ModifiedOn=@ModifiedOn where Id=@Id;";
 			var parameters = new Dictionary<string, object>();
 			parameters.Add("@Id", comparable.Id);
 			parameters.Add("@UnitId", comparable.UnitId);
@@ -195,6 +198,7 @@ namespace Cheaper.Data
 			parameters.Add("@Product", comparable.Product);
 			parameters.Add("@Price", comparable.Price);
 			parameters.Add("@Quantity", comparable.Quantity);
+			parameters.Add("@ModifiedOn", comparable.ModifiedOn);
 			return SqlConnection.ExecuteNonQuery(commandText, parameters) > 0;
 		}
 		
@@ -224,7 +228,8 @@ namespace Cheaper.Data
 						Store = reader.IsDBNull(3) ? null : reader.GetString(3),
 						Product = reader.IsDBNull(4) ? null : reader.GetString(4),
 						Price = reader.GetDouble(5),
-						Quantity = reader.GetDouble(6)
+						Quantity = reader.GetDouble(6),
+						ModifiedOn = reader.GetDateTime(7)
 					};
 		}
 		
