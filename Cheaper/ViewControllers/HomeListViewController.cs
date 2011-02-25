@@ -32,7 +32,7 @@ namespace Cheaper.ViewControllers
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			Title = "Cheaper*";
+			Title = "Cheaper";
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
 			{
@@ -63,7 +63,7 @@ namespace Cheaper.ViewControllers
 			};
 			View.AddSubview(_tableView);
 			
-			_toolbar = new UIToolbar(new RectangleF(0, View.Frame.Height - 88, 480, 44));
+			_toolbar = new UIToolbar(new RectangleF(0, View.Frame.Height - 88, View.Frame.Width, 44));
 			_toolbar.TintColor = UIColor.DarkGray;
 			var toolbarItems = new List<UIBarButtonItem>();
 			_trashButton = new UIBarButtonItem(UIBarButtonSystemItem.Trash, (sender, args) =>

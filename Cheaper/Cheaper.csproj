@@ -13,11 +13,10 @@
     <AssemblyName>Cheaper</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleIdentifier>com.andrewdyoung.cheaper</BundleIdentifier>
-    <BundleVersion>0.31</BundleVersion>
+    <BundleVersion>0.4</BundleVersion>
     <BundleDisplayName>Cheaper</BundleDisplayName>
     <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
     <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
-    <SupportedDevices>IPhoneAndIPad</SupportedDevices>
     <MainNibFileIPad>MainWindow.xib</MainNibFileIPad>
     <MtouchMinimumOS>3.2</MtouchMinimumOS>
   </PropertyGroup>
@@ -131,6 +130,8 @@
     <Compile Include="ViewControllers\Comparison\ComparisonViewController.cs" />
     <Compile Include="ViewControllers\AboutViewController.cs" />
     <Compile Include="Rules\Extensions.cs" />
+    <Compile Include="ViewControllers\AboutTableView.cs" />
+    <Compile Include="ViewControllers\Shared\WebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xib" />

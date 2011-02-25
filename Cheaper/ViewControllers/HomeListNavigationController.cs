@@ -1,7 +1,10 @@
 using System;
+using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using MonoTouch.MessageUI;
 using Cheaper.ViewControllers.Comparable;
 using Cheaper.ViewControllers.Comparison;
+using Cheaper.ViewControllers.Shared;
 
 namespace Cheaper.ViewControllers
 {
@@ -11,7 +14,11 @@ namespace Cheaper.ViewControllers
 		private ComparableViewController _comparableViewController;
 		private ComparisonViewController _comparisonViewController;
 		private ComparisonLineupViewController _comparisonLineupViewController;
+		private UINavigationController _aboutNavigationController;
 		private AboutViewController _aboutViewController;
+		private MFMailComposeViewController _emailController;
+		private WebViewController _webViewController;
+		private const string _urlFormat = "itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id={0}";
 		
 		public override void ViewDidLoad()
 		{
@@ -123,9 +130,43 @@ namespace Cheaper.ViewControllers
 				{
 					DismissModalViewControllerAnimated(true);
 					_aboutViewController = null;
+					_aboutNavigationController = null;
+					_emailController = null;
+					_webViewController = null;
+				};
+				_aboutViewController.OnFeedback += (sender_, args_) =>
+				{
+					_emailController = new MFMailComposeViewController();
+					_emailController.SetToRecipients(new string[] { "cheaperapp@gmail.com" });
+					_emailController.SetSubject("Feedback and bugs");
+					_emailController.Finished += (sender__, args__) =>
+					{
+						if(args__.Result == MFMailComposeResult.Sent)
+						{
+							new UIAlertView("Thank you", "We appreciate your feedback and you'll hear back from us soon!", null, "Ok").Show();
+						}
+						_aboutViewController.DismissModalViewControllerAnimated(true);
+					};
+
+					_aboutViewController.PresentModalViewController(_emailController, true);
+				};
+				_aboutViewController.OnRateThisApp += (sender__, args__) =>
+				{
+					var url = string.Format(_urlFormat, "375611783");
+					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(url));
+				};
+				_aboutViewController.OnTwitter += (sender__, args__) =>
+				{
+					_webViewController = new WebViewController(new Uri("http://twitter.com/cheaperapp"));
+					_webViewController.Title = "@cheaperapp";
+					_aboutNavigationController.PushViewController(_webViewController, true);
 				};
 				_aboutViewController.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
-				PresentModalViewController(_aboutViewController, true);
+				
+				_aboutNavigationController = new UINavigationController();
+				_aboutNavigationController.PushViewController(_aboutViewController, false);
+				
+				PresentModalViewController(_aboutNavigationController, true);
 			};
 
 			PushViewController (_homeListViewController, true);
