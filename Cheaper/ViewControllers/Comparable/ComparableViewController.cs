@@ -131,6 +131,13 @@ namespace Cheaper.ViewControllers.Comparable
 		
 		public bool ValidateData()
 		{
+			
+			if(string.IsNullOrEmpty(_tableView.Product))
+			{
+				new UIAlertView("Product blank", "Enter a product/brand name", null, "ok").Show();
+				return false;
+			}
+			
 			if(string.IsNullOrEmpty(_tableView.Price) || !_moneyRegex.IsMatch(_tableView.Price))
 			{
 				new UIAlertView("Invalid Price", "Enter a proper monetary amount", null, "ok").Show();

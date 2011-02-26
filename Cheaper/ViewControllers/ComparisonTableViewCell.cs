@@ -14,6 +14,14 @@ namespace Cheaper.ViewControllers
 		
 		}
 		
+		public override void LayoutSubviews()
+		{
+			base.LayoutSubviews();
+			TextLabel.BackgroundColor = UIColor.Clear;
+			DetailTextLabel.BackgroundColor = UIColor.Clear;
+			BackgroundColor = UIColor.Clear;
+		}
+		
 		public ComparisonModel Comparison { get; set; }
 	}
 }

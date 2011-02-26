@@ -12,8 +12,7 @@
     <MainNibFile>MainWindow.xib</MainNibFile>
     <AssemblyName>Cheaper</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <BundleIdentifier>com.andrewdyoung.cheaper</BundleIdentifier>
-    <BundleVersion>0.4</BundleVersion>
+    <BundleVersion>0.4 beta 2</BundleVersion>
     <BundleDisplayName>Cheaper</BundleDisplayName>
     <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
     <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
@@ -76,6 +75,7 @@
     <MtouchDebug>False</MtouchDebug>
     <CodesignKey>iPhone Distribution: Andrew Young</CodesignKey>
     <MtouchI18n />
+    <CodesignProvision>ABCCBC10-C430-4886-8138-8F8228DBD5AA</CodesignProvision>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -160,6 +160,12 @@
   <ItemGroup>
     <Content Include="Content\Database\Cheaper.db3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Default%402x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Default.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

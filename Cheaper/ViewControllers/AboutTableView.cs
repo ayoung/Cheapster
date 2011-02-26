@@ -63,7 +63,6 @@ namespace Cheaper.ViewControllers
 						cell.TextLabel.Text = "@cheaperapp";
 						cell.DetailTextLabel.Text = "Follow. Tell us how you got it cheaper.";
 						cell.DetailTextLabel.TextAlignment = UITextAlignment.Left;
-						cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 						break;
 					default:
 						throw new ArgumentException("Invalid section");
@@ -114,6 +113,7 @@ namespace Cheaper.ViewControllers
 						break;
 					case 2:
 						moreTable.FireOnTwitter();
+						tableView.DeselectRow(tableView.IndexPathForSelectedRow, true);
 						break;
 					default:
 						throw new ArgumentException("Invalid section");

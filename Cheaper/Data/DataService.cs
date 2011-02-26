@@ -10,7 +10,7 @@ namespace Cheaper.Data
 	public static class DataService
 	{
 		private const string _lastRowId = "select last_insert_rowid();";
-		private const string _selectComparison = "select c.Id, c.UnitTypeId, c.UnitId, c.CategoryId, c.Name, cc.Store, cc.Price, cc.Quantity, cc.UnitId, cc.Id from Comparison c left outer join Comparable cc on c.CheapestComparableId = cc.Id";
+		private const string _selectComparison = "select c.Id, c.UnitTypeId, c.UnitId, c.CategoryId, c.Name, cc.Store, cc.Price, cc.Quantity, cc.UnitId, cc.Id, cc.Product from Comparison c left outer join Comparable cc on c.CheapestComparableId = cc.Id";
 		
 		#region Comparison
 		
@@ -111,7 +111,8 @@ namespace Cheaper.Data
 				CheapestPrice = reader.IsDBNull(6) ? (double?)null : reader.GetDouble(6),
 				CheapestQuantity = reader.IsDBNull(7) ? (double?)null : reader.GetDouble(7),
 				CheapestUnitId = reader.IsDBNull(8) ? (int?)null : reader.GetInt32(8),
-				CheapestComparableId = reader.IsDBNull(9) ? (int?)null : reader.GetInt32(9)
+				CheapestComparableId = reader.IsDBNull(9) ? (int?)null : reader.GetInt32(9),
+				CheapestProduct = reader.IsDBNull(10) ? null : reader.GetString(10)
 			};
 		}
 		

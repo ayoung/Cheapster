@@ -74,6 +74,7 @@ namespace Cheaper.ViewControllers
 				placeholderLabel.TextAlignment = UITextAlignment.Center;
 				placeholderLabel.TextColor = UIColor.LightGray;
 				placeholderCell.ContentView.AddSubview(placeholderLabel);
+				placeholderLabel.BackgroundColor = UIColor.Clear;
 				return placeholderCell;
 			}
 			
@@ -84,24 +85,23 @@ namespace Cheaper.ViewControllers
 				// No re-usable cell found, create a new one
 				cell = new ComparisonTableViewCell(UITableViewCellStyle.Subtitle, cellIdentifier);
 				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+				cell.TextLabel.AdjustsFontSizeToFitWidth = true;
+				cell.TextLabel.MinimumFontSize = 10;
+				cell.DetailTextLabel.AdjustsFontSizeToFitWidth = true;
+				cell.DetailTextLabel.MinimumFontSize = 10;
 			}
 			var comparison = _tableView.Comparisons[indexPath.Row];
 			
 			cell.TextLabel.Text = comparison.Name;
-			//Comparison.Summary = 
-			//Comparison.Summary = string.Format("Cheaper at {0} for {1}/{2}", comparable.Store, comparable.GetPricePerBaseUnit(Comparison.UnitId).ToString("0.000"), Unit.Name);
-			Console.WriteLine(comparison.CheapestComparableId.HasValue);
-			Console.WriteLine(comparison.Name);
 			if(comparison.CheapestComparableId != null)
 			{
 				if(!string.IsNullOrEmpty(comparison.CheapestStore))
 				{
-					
-					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1} @ {2}", comparison.GetPricePerBaseUnit().ToString("0.00#"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name, comparison.CheapestStore);
+					cell.DetailTextLabel.Text = string.Format("{0} ({1} {2}) @ {3}", comparison.CheapestProduct, comparison.CheapestQuantity, DataService.GetUnitsAsDictionary()[comparison.CheapestUnitId.Value].Name, comparison.CheapestStore);
 				}
 				else
 				{
-					cell.DetailTextLabel.Text = string.Format("Best buy: ${0}/{1}", comparison.GetPricePerBaseUnit().ToString("0.00#"), DataService.GetUnitsAsDictionary()[comparison.UnitId].Name);
+					cell.DetailTextLabel.Text = string.Format("{0} ({1} {2})", comparison.CheapestProduct, comparison.CheapestQuantity, DataService.GetUnitsAsDictionary()[comparison.CheapestUnitId.Value].Name);
 				}
 			}
 			else

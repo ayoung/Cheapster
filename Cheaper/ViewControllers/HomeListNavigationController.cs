@@ -85,6 +85,9 @@ namespace Cheaper.ViewControllers
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.GetSelectedComparable());
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
+						// this fixes the bug where changing a comparison name
+						_homeListViewController.ReloadRowForComparison(_comparisonLineupViewController.ComparisonId);
+						
 						_comparisonLineupViewController.RepositionRowForComparable(_comparisonLineupViewController.GetSelectedComparable().Id);
 						PopViewControllerAnimated(true);
 						_comparableViewController = null;
@@ -157,9 +160,7 @@ namespace Cheaper.ViewControllers
 				};
 				_aboutViewController.OnTwitter += (sender__, args__) =>
 				{
-					_webViewController = new WebViewController(new Uri("http://twitter.com/cheaperapp"));
-					_webViewController.Title = "@cheaperapp";
-					_aboutNavigationController.PushViewController(_webViewController, true);
+					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString("http://twitter.com/cheaperapp"));
 				};
 				_aboutViewController.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
 				

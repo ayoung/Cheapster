@@ -13,6 +13,7 @@ namespace Cheaper.Data.Models
 		public double? CheapestQuantity { get; set; }
 		public int? CheapestUnitId { get; set; }
 		public int? CheapestComparableId { get; set; }
+		public string CheapestProduct { get; set; }
 	}
 }
 

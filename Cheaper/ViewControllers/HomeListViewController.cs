@@ -40,6 +40,10 @@ namespace Cheaper.ViewControllers
 			});
 			
 			_tableView = new HomeTableView(new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - 88), UITableViewStyle.Plain);
+			
+			_tableView.Opaque = false;
+			_tableView.Alpha = 0;
+			
 			_tableView.OnComparisonSelected += (sender, args) =>
 			{
 				NavigationItem.BackBarButtonItem = new UIBarButtonItem("Home", UIBarButtonItemStyle.Bordered, null);
@@ -101,6 +105,17 @@ namespace Cheaper.ViewControllers
 			{
 				_tableView.AddComparison(_comparisonToAdd);
 				_comparisonToAdd = null;
+			}
+			
+			if(!_tableView.Opaque)
+			{
+				UIView.Animate(0.4, () => 
+				{
+					_tableView.Alpha = 1;
+				}, () =>
+				{
+					_tableView.Opaque = true;
+				});
 			}
 
 			_tableView.DeselectSelectedRow();

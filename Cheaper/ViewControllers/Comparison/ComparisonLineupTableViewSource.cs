@@ -54,6 +54,8 @@ namespace Cheaper
 				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 				cell.TextLabel.AdjustsFontSizeToFitWidth = true;
 				cell.TextLabel.MinimumFontSize = 10;
+				cell.DetailTextLabel.AdjustsFontSizeToFitWidth = true;
+				cell.DetailTextLabel.MinimumFontSize = 10;
 			}
 
 			var comparable = _tableView.Comparables[indexPath.Row];

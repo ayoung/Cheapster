@@ -55,7 +55,7 @@ namespace Cheaper.ViewControllers.Comparable
 					{
 						_productCell = new EventedTableViewCell();
 						AddLabel(_productCell, "Product");
-						ProductText = AddTextField(_productCell, "or brand name (optional)", indexPath, () => { return StoreText; });
+						ProductText = AddTextField(_productCell, "or brand name", indexPath, () => { return StoreText; });
 						ProductText.Text = _comparable == null ? null : _comparable.Product;
 						ProductText.AutocapitalizationType = UITextAutocapitalizationType.Words;
 						ProductText.EditingChanged += (sender, args) => 
