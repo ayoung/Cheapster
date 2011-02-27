@@ -17,6 +17,7 @@ namespace Cheaper.ViewControllers
 		private UIToolbar _toolbar;
 		private UIBarButtonItem _trashButton;
 		private ComparisonModel _comparisonToAdd;
+		private int? _comparisonToReposition;
 		
 		public HomeListViewController()
 		{
@@ -25,6 +26,11 @@ namespace Cheaper.ViewControllers
 		public void ReloadRowForComparison(int comparisonId)
 		{
 			_tableView.ReloadRowForComparison(comparisonId);
+		}
+		
+		public void RepositionRowForComparison(int comparisonId)
+		{
+			_comparisonToReposition = comparisonId;
 		}
 		
 		public ComparisonModel SelectedComparison { get; private set; }
@@ -101,24 +107,27 @@ namespace Cheaper.ViewControllers
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
+			
+			if(!_tableView.Opaque)
+			{
+				UIView.Animate(0.4, () => { _tableView.Alpha = 1; }, () => { _tableView.Opaque = true; });
+			}
+			
 			if(_comparisonToAdd != null)
 			{
 				_tableView.AddComparison(_comparisonToAdd);
 				_comparisonToAdd = null;
 			}
 			
-			if(!_tableView.Opaque)
+			if(_comparisonToReposition.HasValue)
 			{
-				UIView.Animate(0.4, () => 
-				{
-					_tableView.Alpha = 1;
-				}, () =>
-				{
-					_tableView.Opaque = true;
-				});
+				_tableView.RepositionRowForComparison(_comparisonToReposition.Value);
+				_comparisonToReposition = null;
 			}
-
-			_tableView.DeselectSelectedRow();
+			else
+			{
+				_tableView.DeselectSelectedRow();
+			}
 		}
 		
 		public void AddComparison(ComparisonModel comparison)

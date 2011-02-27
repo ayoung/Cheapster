@@ -85,7 +85,8 @@ namespace Cheaper.ViewControllers
 					_comparableViewController = new ComparableViewController(_comparisonLineupViewController.GetSelectedComparable());
 					_comparableViewController.OnFinished += (sender__, args__) =>
 					{
-						// this fixes the bug where changing a comparison name
+						// this fixes the bug where changing the "winning"
+						// comparable name was not reflected on the home list view
 						_homeListViewController.ReloadRowForComparison(_comparisonLineupViewController.ComparisonId);
 						
 						_comparisonLineupViewController.RepositionRowForComparable(_comparisonLineupViewController.GetSelectedComparable().Id);
@@ -113,6 +114,7 @@ namespace Cheaper.ViewControllers
 					{
 						_comparisonLineupViewController.ReloadOnAppeared();
 						_homeListViewController.ReloadRowForComparison(_comparisonLineupViewController.ComparisonId);
+						_homeListViewController.RepositionRowForComparison(_comparisonLineupViewController.ComparisonId);
 						DismissModalViewControllerAnimated(true);
 					};
 					PresentModalViewController(_comparisonViewController, true);

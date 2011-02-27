@@ -30,9 +30,7 @@ namespace Cheaper.ViewControllers
 
 		public void ReloadRowForComparison(int comparisonId)
 		{
-			var comparison = (from c in Comparisons
-				where c.Id == comparisonId
-				select c).FirstOrDefault();
+			var comparison = FindComparison(comparisonId);
 			
 			if(comparison == null)
 			{
@@ -44,6 +42,43 @@ namespace Cheaper.ViewControllers
 			var indexPaths = new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) };
 			ReloadRows(indexPaths, UITableViewRowAnimation.None);
 			SelectRow(indexPaths[0], false, UITableViewScrollPosition.None);
+		}
+		
+		private ComparisonModel FindComparison(int comparisonId)
+		{
+			return (from c in Comparisons
+				where c.Id == comparisonId
+				select c).FirstOrDefault();
+		}
+		
+		public void RepositionRowForComparison(int comparisonId)
+		{
+			var comparison = FindComparison(comparisonId);
+			
+			if(comparison == null)
+			{
+				return;
+			}
+			
+			// refresh the comparable object
+			var index = Comparisons.IndexOf(comparison);
+			
+			// reorder the list again
+			Comparisons = Comparisons.OrderBy(c => c.Name).ToList();
+			
+			// get the new index of the comparable
+			var newIndex = Comparisons.IndexOf(comparison);
+			
+			if(newIndex != index)
+			{
+				DeselectRow(IndexPathForSelectedRow, false);
+				BeginUpdates();
+				InsertRows(new NSIndexPath[] { NSIndexPath.FromRowSection(newIndex, 0) }, UITableViewRowAnimation.None);
+				DeleteRows(new NSIndexPath[] { NSIndexPath.FromRowSection(index, 0) }, UITableViewRowAnimation.None);
+				EndUpdates();
+				SelectRow(NSIndexPath.FromRowSection(newIndex, 0), false, UITableViewScrollPosition.Middle);
+				DeselectRow(IndexPathForSelectedRow, true);
+			}
 		}
 		
 		private void Reset()
