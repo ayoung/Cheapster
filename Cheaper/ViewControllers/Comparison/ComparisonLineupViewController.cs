@@ -92,10 +92,6 @@ namespace Cheaper.ViewControllers.Comparison
 			if(_reloadOnAppeared)
 			{
 				_reloadOnAppeared = false;
-				if(_tableView.Comparables.Count == 0)
-				{
-					return;
-				}
 				
 				// fade table out, reload data and fade back in
 				_tableView.Reset(_comparison);
