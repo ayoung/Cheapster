@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
-using Cheaper.Data;
-using Cheaper.Data.Models;
+using Cheapster.Data;
+using Cheapster.Data.Models;
 
-namespace Cheaper.ViewControllers
+namespace Cheapster.ViewControllers
 {
 	public class ComparisonTableViewCell : UITableViewCell
 	{

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Mono.Data.Sqlite;
-using Cheaper;
+using Cheapster;
 
-namespace Cheaper.Data
+namespace Cheapster.Data
 {
 	static internal class SqlConnection
 	{

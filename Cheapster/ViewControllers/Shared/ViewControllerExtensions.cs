@@ -1,5 +1,5 @@
 using System;
-namespace Cheaper.ViewControllers.Shared
+namespace Cheapster.ViewControllers.Shared
 {
 	public static class ViewControllerExtensions
 	{

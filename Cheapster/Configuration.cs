@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-namespace Cheaper
+namespace Cheapster
 {
 	public static class Configuration
 	{
 		private const string _dbPath = "Content/Database";
-		public const string DB_FILENAME = "Cheaper.db3";
+		public const string DB_FILENAME = "Cheapster.db3";
 		public const string DB_TEMP_BACKUP_FILENAME = "backup.zip";
 		public static readonly string DB_ORIGINAL_PATH;
 		public static readonly string DB_INSTALLED_PATH;

@@ -3,13 +3,13 @@ using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using Cheaper.ViewControllers.Shared;
-using Cheaper.Data;
-using Cheaper.Rules;
+using Cheapster.ViewControllers.Shared;
+using Cheapster.Data;
+using Cheapster.Rules;
 
-using Cheaper.ViewControllers.Comparison;
+using Cheapster.ViewControllers.Comparison;
 
-namespace Cheaper
+namespace Cheapster
 {
 	public class ComparisonLineupTableViewSource : UITableViewSource
 	{

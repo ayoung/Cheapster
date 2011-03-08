@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Cheaper.Data;
-using Cheaper.Data.Models;
+using Cheapster.Data;
+using Cheapster.Data.Models;
 
-namespace Cheaper.Rules
+namespace Cheapster.Rules
 {
 	public static class Extensions
 	{

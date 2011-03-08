@@ -3,12 +3,12 @@ using System.IO;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.MessageUI;
-using Cheaper.ViewControllers.Comparable;
-using Cheaper.ViewControllers.Comparison;
-using Cheaper.ViewControllers.Shared;
+using Cheapster.ViewControllers.Comparable;
+using Cheapster.ViewControllers.Comparison;
+using Cheapster.ViewControllers.Shared;
 using LibZipArchive;
 
-namespace Cheaper.ViewControllers
+namespace Cheapster.ViewControllers
 {
 	public class HomeListNavigationController : UINavigationController
 	{
@@ -169,7 +169,7 @@ namespace Cheaper.ViewControllers
 					var fileData = NSData.FromFile(Configuration.DB_TEMP_BACKUP_PATH);
 					_emailController = new MFMailComposeViewController();
 					_emailController.SetSubject(string.Format("Cheapster Data Backup {0}", DateTime.Now.ToShortDateString()));
-					_emailController.AddAttachmentData(fileData, "cheaper/x-cdbk", attachmentFileName);
+					_emailController.AddAttachmentData(fileData, "Cheapster/x-cdbk", attachmentFileName);
 					_emailController.Delegate = new MailComposeDelegate();
 					_emailController.Finished += (sender__, args__) =>
 					{

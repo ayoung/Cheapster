@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Mono.Data.Sqlite;
-using Cheaper.Data.Models;
-using Cheaper.Data;
+using Cheapster.Data.Models;
+using Cheapster.Data;
 
-namespace Cheaper.Data
+namespace Cheapster.Data
 {
 	public static class DataService
 	{

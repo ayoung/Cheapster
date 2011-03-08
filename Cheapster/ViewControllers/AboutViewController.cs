@@ -2,9 +2,9 @@ using System;
 using System.Drawing;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using Cheaper.ViewControllers.Shared;
+using Cheapster.ViewControllers.Shared;
 
-namespace Cheaper.ViewControllers
+namespace Cheapster.ViewControllers
 {
 	public class AboutViewController : UIViewController
 	{

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using Cheaper.Data;
-using Cheaper.Data.Models;
-using Cheaper.ViewControllers.Shared;
+using Cheapster.Data;
+using Cheapster.Data.Models;
+using Cheapster.ViewControllers.Shared;
 
-namespace Cheaper.ViewControllers.Comparison
+namespace Cheapster.ViewControllers.Comparison
 {
 	public class ComparisonLineupViewController : UIViewController
 	{

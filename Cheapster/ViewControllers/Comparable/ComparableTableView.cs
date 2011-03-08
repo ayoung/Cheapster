@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Linq;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using Cheaper.ViewControllers.Shared;
-using Cheaper.Data.Models;
+using Cheapster.ViewControllers.Shared;
+using Cheapster.Data.Models;
 
-namespace Cheaper.ViewControllers.Comparable
+namespace Cheapster.ViewControllers.Comparable
 {
 	public class ComparableTableView : UITableView
 	{

@@ -3,10 +3,10 @@ using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
-using Cheaper.Data;
-using Cheaper.Data.Models;
+using Cheapster.Data;
+using Cheapster.Data.Models;
 
-namespace Cheaper.ViewControllers.Shared
+namespace Cheapster.ViewControllers.Shared
 {
 	public class UnitPicker : UIPickerView
 	{

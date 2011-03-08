@@ -2,12 +2,12 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using Cheaper.Support;
+using Cheapster.Support;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using Cheaper.ViewControllers;
+using Cheapster.ViewControllers;
 
-namespace Cheaper
+namespace Cheapster
 {
 	public class Application
 	{

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using Cheaper.Data;
-using Cheaper.Data.Models;
-using Cheaper.Rules;
+using Cheapster.Data;
+using Cheapster.Data.Models;
+using Cheapster.Rules;
 
-namespace Cheaper.ViewControllers
+namespace Cheapster.ViewControllers
 {
 	public class HomeTableViewSource : UITableViewSource
 	{

@@ -3,7 +3,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Cheaper.ViewControllers.Shared
+namespace Cheapster.ViewControllers.Shared
 {
 	public class WebViewController : UIViewController
 	{

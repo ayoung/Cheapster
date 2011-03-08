@@ -3,7 +3,7 @@ using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Cheaper.ViewControllers.Comparable
+namespace Cheapster.ViewControllers.Comparable
 {
 	public class ComparableScrollView : UIScrollView
 	{

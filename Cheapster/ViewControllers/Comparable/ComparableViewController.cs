@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using Cheaper.Data;
-using Cheaper.Data.Models;
-using Cheaper.ViewControllers.Shared;
+using Cheapster.Data;
+using Cheapster.Data.Models;
+using Cheapster.ViewControllers.Shared;
 
-namespace Cheaper.ViewControllers.Comparable
+namespace Cheapster.ViewControllers.Comparable
 {
 	public class ComparableViewController : UIViewController
 	{

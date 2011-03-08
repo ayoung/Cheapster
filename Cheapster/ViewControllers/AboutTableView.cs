@@ -3,7 +3,7 @@ using System.Drawing;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 
-namespace Cheaper.ViewControllers
+namespace Cheapster.ViewControllers
 {
 	public class MoreTableView : UITableView
 	{
@@ -74,7 +74,7 @@ namespace Cheaper.ViewControllers
 							break;
 						case 2:
 							cell.TextLabel.Text = "@cheapsterapp";
-							cell.DetailTextLabel.Text = "Follow. Tell us how you got it cheaper.";
+							cell.DetailTextLabel.Text = "Follow. Tell us how you got it Cheapster.";
 							cell.DetailTextLabel.TextAlignment = UITextAlignment.Left;
 							cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 							break;

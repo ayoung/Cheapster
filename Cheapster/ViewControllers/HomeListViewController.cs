@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.UIKit;
-using Cheaper.Data;
-using Cheaper.ViewControllers.Shared;
-using Cheaper.Data.Models;
+using Cheapster.Data;
+using Cheapster.ViewControllers.Shared;
+using Cheapster.Data.Models;
 using System.IO;
 
-namespace Cheaper.ViewControllers
+namespace Cheapster.ViewControllers
 {
 	public class HomeListViewController : UIViewController
 	{

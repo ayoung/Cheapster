@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using Cheaper.ViewControllers.Shared;
+using Cheapster.ViewControllers.Shared;
 
-namespace Cheaper.ViewControllers.Comparison
+namespace Cheapster.ViewControllers.Comparison
 {
 	public class ComparisonTableViewSource : UITableViewSource
 	{

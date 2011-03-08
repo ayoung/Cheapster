@@ -5,7 +5,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Cheaper
+namespace Cheapster
 {
 	public partial class TestViewController : UIViewController
 	{

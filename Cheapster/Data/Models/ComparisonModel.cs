@@ -1,5 +1,5 @@
 using System;
-namespace Cheaper.Data.Models
+namespace Cheapster.Data.Models
 {
 	public class ComparisonModel
 	{
