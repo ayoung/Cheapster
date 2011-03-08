@@ -2,6 +2,47 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+      <dict>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.plain-text</string>
+          <string>public.text</string>
+        </array>
+        <key>UTTypeIdentifier</key>
+        <string>com.cheaper.cdbk</string>
+        <key>UTTypeDescription</key>
+        <string>Cheaper Database Backup File</string>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <string>cdbk</string>
+          <key>public.mime-type</key>
+          <string>cheaper/x-cdbk</string>
+        </dict>
+      </dict>
+    </array>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>DocumentIcon.png</string>
+        <key>CFBundleTypeIconFiles</key>
+        <array>
+          <string>DocumentIcon.png</string>
+          <string>DocumentIcon@2x.png</string>
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>Cheapster Data Backup</string>
+        <key>LSItemContentTypes</key>
+        <array>
+          <string>com.cheaper.cdbk</string>
+        </array>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+      </dict>
+    </array>
     <key>UIPrerenderedIcon</key>
     <true />
     <key>UISupportedInterfaceOrientations</key>

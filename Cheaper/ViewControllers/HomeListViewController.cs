@@ -5,6 +5,7 @@ using MonoTouch.UIKit;
 using Cheaper.Data;
 using Cheaper.ViewControllers.Shared;
 using Cheaper.Data.Models;
+using System.IO;
 
 namespace Cheaper.ViewControllers
 {
@@ -38,7 +39,7 @@ namespace Cheaper.ViewControllers
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			Title = "Cheaper";
+			Title = "Cheapster";
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (sender, args) =>
 			{
@@ -128,6 +129,7 @@ namespace Cheaper.ViewControllers
 			{
 				_tableView.DeselectSelectedRow();
 			}
+			
 		}
 		
 		public void AddComparison(ComparisonModel comparison)

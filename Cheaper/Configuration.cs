@@ -4,15 +4,18 @@ namespace Cheaper
 {
 	public static class Configuration
 	{
-		private const string _dbFilename = "Cheaper.db3";
 		private const string _dbPath = "Content/Database";
+		public const string DB_FILENAME = "Cheaper.db3";
+		public const string DB_TEMP_BACKUP_FILENAME = "backup.zip";
 		public static readonly string DB_ORIGINAL_PATH;
 		public static readonly string DB_INSTALLED_PATH;
+		public static readonly string DB_TEMP_BACKUP_PATH;
 
 		static Configuration()
 		{
-			DB_ORIGINAL_PATH = Path.Combine(ToAbsolutePath(_dbPath), Configuration._dbFilename);
-			DB_INSTALLED_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), _dbFilename);
+			DB_ORIGINAL_PATH = Path.Combine(ToAbsolutePath(_dbPath), Configuration.DB_FILENAME);
+			DB_INSTALLED_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DB_FILENAME);
+			DB_TEMP_BACKUP_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DB_TEMP_BACKUP_FILENAME);
 		}
 
 		/// <summary>

@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using MonoTouch.MessageUI;
 using Cheaper.ViewControllers.Comparable;
 using Cheaper.ViewControllers.Comparison;
 using Cheaper.ViewControllers.Shared;
+using LibZipArchive;
 
 namespace Cheaper.ViewControllers
 {
@@ -17,7 +19,6 @@ namespace Cheaper.ViewControllers
 		private UINavigationController _aboutNavigationController;
 		private AboutViewController _aboutViewController;
 		private MFMailComposeViewController _emailController;
-		private WebViewController _webViewController;
 		private const string _urlFormat = "itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id={0}";
 		
 		public override void ViewDidLoad()
@@ -137,12 +138,11 @@ namespace Cheaper.ViewControllers
 					_aboutViewController = null;
 					_aboutNavigationController = null;
 					_emailController = null;
-					_webViewController = null;
 				};
 				_aboutViewController.OnFeedback += (sender_, args_) =>
 				{
 					_emailController = new MFMailComposeViewController();
-					_emailController.SetToRecipients(new string[] { "cheaperapp@gmail.com" });
+					_emailController.SetToRecipients(new string[] { "heycheapster@gmail.com" });
 					_emailController.SetSubject("Feedback and bugs");
 					_emailController.Finished += (sender__, args__) =>
 					{
@@ -151,8 +151,37 @@ namespace Cheaper.ViewControllers
 							new UIAlertView("Thank you", "We appreciate your feedback and you'll hear back from us soon!", null, "Ok").Show();
 						}
 						_aboutViewController.DismissModalViewControllerAnimated(true);
+						_emailController = null;
 					};
 
+					_aboutViewController.PresentModalViewController(_emailController, true);
+				};
+				_aboutViewController.OnBackupData += (sender_, args_) =>
+				{
+					var attachmentFileName = string.Format("CheapsterBackup_{0}.cdbk", DateTime.Now.ToString("yyyyMMdd"));
+					
+					// compress the database
+					var zipFile = new LibZipArchive.ZipArchive();
+					zipFile.CreateZipFile2(Configuration.DB_TEMP_BACKUP_PATH);
+					zipFile.AddFile(Configuration.DB_INSTALLED_PATH, Configuration.DB_FILENAME);
+					zipFile.CloseZipFile2();
+					
+					var fileData = NSData.FromFile(Configuration.DB_TEMP_BACKUP_PATH);
+					_emailController = new MFMailComposeViewController();
+					_emailController.SetSubject(string.Format("Cheapster Data Backup {0}", DateTime.Now.ToShortDateString()));
+					_emailController.AddAttachmentData(fileData, "cheaper/x-cdbk", attachmentFileName);
+					_emailController.Delegate = new MailComposeDelegate();
+					_emailController.Finished += (sender__, args__) =>
+					{
+						if(args__.Result == MFMailComposeResult.Sent)
+						{
+							new UIAlertView("Email Sent", "", null, "Ok").Show();
+						}
+
+						_aboutViewController.DismissModalViewControllerAnimated(true);
+						_emailController = null;
+					};
+					
 					_aboutViewController.PresentModalViewController(_emailController, true);
 				};
 				_aboutViewController.OnRateThisApp += (sender__, args__) =>
@@ -162,7 +191,7 @@ namespace Cheaper.ViewControllers
 				};
 				_aboutViewController.OnTwitter += (sender__, args__) =>
 				{
-					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString("http://twitter.com/cheaperapp"));
+					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString("http://twitter.com/cheapsterapp"));
 				};
 				_aboutViewController.ModalTransitionStyle = UIModalTransitionStyle.FlipHorizontal;
 				
@@ -172,8 +201,17 @@ namespace Cheaper.ViewControllers
 				PresentModalViewController(_aboutNavigationController, true);
 			};
 
-			PushViewController (_homeListViewController, true);
-			base.ViewDidLoad ();
+			PushViewController(_homeListViewController, true);
+			base.ViewDidLoad();
+		}
+		
+		private class MailComposeDelegate : MFMailComposeViewControllerDelegate
+		{
+			
+			public override void Finished(MFMailComposeViewController controller, MFMailComposeResult result, NSError error)
+			{
+				File.Delete(Configuration.DB_TEMP_BACKUP_PATH);
+			}
 		}
 	}
 }

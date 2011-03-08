@@ -13,6 +13,7 @@ namespace Cheaper.ViewControllers
 		public event EventHandler OnRateThisApp;
 		public event EventHandler OnFeedback;
 		public event EventHandler OnTwitter;
+		public event EventHandler OnBackupData;
 
 		public AboutViewController()
 		{
@@ -21,6 +22,11 @@ namespace Cheaper.ViewControllers
 		public void FireOnRateThisApp()
 		{
 			OnRateThisApp.Fire(this, EventArgs.Empty);
+		}
+		
+		public void FireOnBackupData()
+		{
+			OnBackupData.Fire(this, EventArgs.Empty);
 		}
 
 		public void FireOnFeedback()
