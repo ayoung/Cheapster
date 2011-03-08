@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cheaper", "Cheaper\Cheaper.csproj", "{8EABC1FF-44A2-45C2-B244-E2DC22FEA3CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cheapster", "Cheapster\Cheapster.csproj", "{8EABC1FF-44A2-45C2-B244-E2DC22FEA3CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +24,6 @@ Global
 		{8EABC1FF-44A2-45C2-B244-E2DC22FEA3CC}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Cheaper\Cheaper.csproj
+		StartupItem = Cheapster\Cheapster.csproj
 	EndGlobalSection
 EndGlobal

@@ -13,7 +13,7 @@
     <AssemblyName>Cheaper</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleVersion>0.4 beta 2</BundleVersion>
-    <BundleDisplayName>Cheaper</BundleDisplayName>
+    <BundleDisplayName>Cheapster</BundleDisplayName>
     <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
     <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
     <MainNibFileIPad>MainWindow.xib</MainNibFileIPad>
