@@ -182,7 +182,7 @@ namespace Cheapster.ViewControllers
 					var zipFile = new LibZipArchive.ZipArchive();
 					zipFile.CreateZipFile2(Configuration.USER_DB_TEMP_ZIP_PATH);
 					zipFile.AddFile(Configuration.USER_DB_INSTALLED_PATH, Configuration.USER_DB_FILENAME);
-					 zipFile.CloseZipFile2();
+					zipFile.CloseZipFile2();
 					
 					var fileData = NSData.FromFile(Configuration.USER_DB_TEMP_ZIP_PATH);
 					_emailController = new MFMailComposeViewController();
@@ -205,7 +205,8 @@ namespace Cheapster.ViewControllers
 				_aboutViewController.OnRateThisApp += (sender__, args__) =>
 				{
 					var url = string.Format(_urlFormat, "375611783");
-					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(url));
+					//UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(url));
+					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString("http://itunes.apple.com"));
 				};
 				_aboutViewController.OnTwitter += (sender__, args__) =>
 				{

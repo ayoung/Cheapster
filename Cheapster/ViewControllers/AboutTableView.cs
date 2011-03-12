@@ -74,7 +74,7 @@ namespace Cheapster.ViewControllers
 							break;
 						case 2:
 							cell.TextLabel.Text = "@cheapsterapp";
-							cell.DetailTextLabel.Text = "Follow. Tell us how you got it Cheapster.";
+							cell.DetailTextLabel.Text = "Follow. Tell us how you got it cheaper.";
 							cell.DetailTextLabel.TextAlignment = UITextAlignment.Left;
 							cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 							break;
