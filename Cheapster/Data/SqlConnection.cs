@@ -22,7 +22,7 @@ namespace Cheapster.Data
 		
 		public static void ReaderWithCommand(string commandString, Dictionary<string, object> parameters, Action<SqliteDataReader> block)
 		{
-			using(var connection = SqlConnection.NewConnection())
+			using(var connection = SqlConnection.NewConnection(Configuration.USER_DB_INSTALLED_PATH))
 			{
 				connection.Open();
 				using(var attachCommand = connection.CreateCommand())
@@ -44,7 +44,7 @@ namespace Cheapster.Data
 		
 		public static int ExecuteNonQuery(string commandString, Dictionary<string, object> parameters)
 		{
-			using(var connection = SqlConnection.NewConnection())
+			using(var connection = SqlConnection.NewConnection(Configuration.USER_DB_INSTALLED_PATH))
 			{
 				connection.Open();
 				using(var attachCommand = connection.CreateCommand())
@@ -62,9 +62,9 @@ namespace Cheapster.Data
 			}
 		}
 
-		public static SqliteConnection NewConnection ()
+		public static SqliteConnection NewConnection (string pathToDb)
 		{
-			bool exists = File.Exists (Configuration.USER_DB_INSTALLED_PATH);
+			bool exists = File.Exists (pathToDb);
 			if (!exists) {
 				throw new Exception ("Sqlite file was not found");
 			}

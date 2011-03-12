@@ -172,8 +172,7 @@ namespace Cheapster.ViewControllers
 				_aboutViewController.OnBackupData += (sender_, args_) =>
 				{
 					var attachmentFileName = string.Format("CheapsterBackup_{0}.cdbk", DateTime.Now.ToString("yyyyMMdd"));
-					var success = false;
-					
+
 					if(!Directory.Exists(Configuration.TEMP_FOLDER))
 					{
 						Directory.CreateDirectory(Configuration.TEMP_FOLDER);
@@ -181,11 +180,11 @@ namespace Cheapster.ViewControllers
 					
 					// compress the database
 					var zipFile = new LibZipArchive.ZipArchive();
-					success = zipFile.CreateZipFile2(Configuration.USER_DB_TEMP_BACKUP_PATH);
-					success = zipFile.AddFile(Configuration.USER_DB_INSTALLED_PATH, Configuration.USER_DB_FILENAME);
-					success = zipFile.CloseZipFile2();
+					zipFile.CreateZipFile2(Configuration.USER_DB_TEMP_ZIP_PATH);
+					zipFile.AddFile(Configuration.USER_DB_INSTALLED_PATH, Configuration.USER_DB_FILENAME);
+					 zipFile.CloseZipFile2();
 					
-					var fileData = NSData.FromFile(Configuration.USER_DB_TEMP_BACKUP_PATH);
+					var fileData = NSData.FromFile(Configuration.USER_DB_TEMP_ZIP_PATH);
 					_emailController = new MFMailComposeViewController();
 					_emailController.SetSubject(string.Format("Cheapster Data Backup {0}", DateTime.Now.ToShortDateString()));
 					_emailController.SetMessageBody("Here is your Cheapster data. \n\n To restore from this backup, open this email in the Mail app, touch the file and hold down until a menu appears with an option for \"Open in Cheapster\".", false);

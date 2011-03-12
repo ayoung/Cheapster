@@ -293,6 +293,32 @@ namespace Cheapster.Data
 		}
 		
 		#endregion
+		
+		#region Database
+		
+		public static double GetDbVersion(string pathToDb)
+		{
+			var commandText = "select DbVersion from Meta;";
+			double version = 0;
+
+			using(var connection = SqlConnection.NewConnection(pathToDb))
+			using(var command = connection.CreateCommand())
+			{
+				command.CommandText = commandText;
+				connection.Open();
+				using(var reader = command.ExecuteReader())
+				{
+					while(reader.Read())
+					{
+						version = reader.GetFloat(0);
+					}
+				}
+			}
+			
+			return version;
+		}		
+		
+		#endregion
 	}
 }
 

@@ -11,7 +11,7 @@
     <RootNamespace>Cheapster</RootNamespace>
     <MainNibFile>MainWindow.xib</MainNibFile>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <BundleVersion>0.51</BundleVersion>
+    <BundleVersion>1.0</BundleVersion>
     <BundleDisplayName>Cheapster</BundleDisplayName>
     <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
     <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
@@ -96,7 +96,7 @@
     <MtouchDebug>False</MtouchDebug>
     <CodesignKey>iPhone Distribution: Andrew Young</CodesignKey>
     <MtouchI18n />
-    <CodesignProvision>ABCCBC10-C430-4886-8138-8F8228DBD5AA</CodesignProvision>
+    <CodesignProvision>64F3EC5C-68A2-4B44-A5E0-4F1E5FE2AED2</CodesignProvision>
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
     <MtouchUseLlvm>false</MtouchUseLlvm>
     <MtouchUseArmv7>false</MtouchUseArmv7>

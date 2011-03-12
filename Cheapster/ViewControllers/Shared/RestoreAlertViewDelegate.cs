@@ -35,31 +35,48 @@ namespace Cheapster.ViewControllers.Shared
 		private void RestoreDb(Action finishedRestoringCallback)
 		{
 			Console.WriteLine("Restoring backup from " + _urlToFile.AbsoluteString);
-			var filePath = Path.Combine(Configuration.TEMP_FOLDER, Configuration.USER_DB_FILENAME);
 			var unsuccessful = false;
 			
-			if(File.Exists(filePath))
+			if(File.Exists(Configuration.USER_DB_TEMP_DB_PATH))
 			{
-				File.Delete(filePath);
+				File.Delete(Configuration.USER_DB_TEMP_DB_PATH);
 			}
 			
-			var zip = new ZipArchive();
-			unsuccessful = !zip.UnzipOpenFile(_urlToFile.Path) || unsuccessful;
-			unsuccessful = !zip.UnzipFileTo(Configuration.TEMP_FOLDER, true) || unsuccessful;
-			zip.CloseZipFile2();
-			
-			Console.WriteLine("File exists: " + File.Exists(filePath));
-			if(!File.Exists(filePath) || unsuccessful)
+			try
+			{
+				// unzip file to temp folder
+				var zip = new ZipArchive();
+				unsuccessful = !zip.UnzipOpenFile(_urlToFile.Path) || unsuccessful;
+				unsuccessful = !zip.UnzipFileTo(Configuration.TEMP_FOLDER, true) || unsuccessful;
+				zip.CloseZipFile2();
+				
+				// check if expected dbd file exists
+				Console.WriteLine("File exists: " + File.Exists(Configuration.USER_DB_TEMP_DB_PATH));
+				if(!File.Exists(Configuration.USER_DB_TEMP_DB_PATH) || unsuccessful)
+				{
+					throw new Exception("Unzipping file was unsuccessful.");
+				}
+				
+				// verify db version is compatible
+				var version = Data.DataService.GetDbVersion(Configuration.USER_DB_TEMP_DB_PATH);
+				if(version != 1)
+				{
+					throw new Exception("Import db was not in a compatible version");
+				}
+				
+				// copy db to user db installed path
+				File.Copy(Configuration.USER_DB_TEMP_DB_PATH, Configuration.USER_DB_INSTALLED_PATH, true);
+			}
+			catch (Exception e)
 			{
 				new UIAlertView("Warning", "Could not restore data with the given file. Cheapster has left your data unchanged.", null, "Dismiss").Show();
 				finishedRestoringCallback();
 				return;
 			}
 			
-			File.Copy(filePath, Configuration.USER_DB_INSTALLED_PATH, true);
-			
 			try
 			{
+				//Configuration.USER_DB_TEMP_DB_PATH
 				finishedRestoringCallback();
 			}
 			catch(Exception e)
