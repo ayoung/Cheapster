@@ -8,16 +8,16 @@
     <ProjectGuid>{8EABC1FF-44A2-45C2-B244-E2DC22FEA3CC}</ProjectGuid>
     <ProjectTypeGuids>{E613F3A2-FE9C-494F-B74E-F63BCB86FEA6};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Cheaper</RootNamespace>
+    <RootNamespace>Cheapster</RootNamespace>
     <MainNibFile>MainWindow.xib</MainNibFile>
-    <AssemblyName>Cheaper</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <BundleVersion>0.4 beta 2</BundleVersion>
+    <BundleVersion>0.51</BundleVersion>
     <BundleDisplayName>Cheapster</BundleDisplayName>
     <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
     <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
     <MainNibFileIPad>MainWindow.xib</MainNibFileIPad>
     <MtouchMinimumOS>3.2</MtouchMinimumOS>
+    <AssemblyName>Cheapster</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +32,10 @@
     <MtouchI18n />
     <MtouchLink>None</MtouchLink>
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
+    <MtouchUseLlvm>false</MtouchUseLlvm>
+    <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseThumb>false</MtouchUseThumb>
+    <MtouchUseSGen>false</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -44,6 +48,10 @@
     <MtouchLink>None</MtouchLink>
     <MtouchI18n />
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
+    <MtouchUseLlvm>false</MtouchUseLlvm>
+    <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseThumb>false</MtouchUseThumb>
+    <MtouchUseSGen>false</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +67,10 @@
     <MtouchI18n />
     <CodesignProvision>64F3EC5C-68A2-4B44-A5E0-4F1E5FE2AED2</CodesignProvision>
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
+    <MtouchUseLlvm>false</MtouchUseLlvm>
+    <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseThumb>false</MtouchUseThumb>
+    <MtouchUseSGen>false</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -71,6 +83,10 @@
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchI18n />
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
+    <MtouchUseLlvm>false</MtouchUseLlvm>
+    <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseThumb>false</MtouchUseThumb>
+    <MtouchUseSGen>false</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Adhoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -82,6 +98,10 @@
     <MtouchI18n />
     <CodesignProvision>ABCCBC10-C430-4886-8138-8F8228DBD5AA</CodesignProvision>
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
+    <MtouchUseLlvm>false</MtouchUseLlvm>
+    <MtouchUseArmv7>false</MtouchUseArmv7>
+    <MtouchUseThumb>false</MtouchUseThumb>
+    <MtouchUseSGen>false</MtouchUseSGen>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -97,11 +117,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="Content\Database\Cheaper.sql" />
     <None Include="Content\Icons\iPhone.png" />
     <None Include="Content\Icons\iPhone4.png" />
     <None Include="lib\libziparchive.a" />
     <None Include="lib\monotouch-ziparchive.dll" />
+    <None Include="Content\Database\AppData.sql" />
+    <None Include="Content\Database\UserData.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow.xib.designer.cs">
@@ -144,6 +165,8 @@
     <Compile Include="Rules\Extensions.cs" />
     <Compile Include="ViewControllers\AboutTableView.cs" />
     <Compile Include="ViewControllers\Shared\WebViewController.cs" />
+    <Compile Include="AppState.cs" />
+    <Compile Include="ViewControllers\Shared\RestoreAlertViewDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainWindow.xib" />
@@ -171,9 +194,6 @@
     <Folder Include="lib\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Database\Cheaper.db3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Default%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -199,6 +219,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="iTunesArtwork">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Database\UserData.db3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Database\AppData.db3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

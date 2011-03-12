@@ -19,9 +19,20 @@ namespace Cheapster.ViewControllers
 		private UIBarButtonItem _trashButton;
 		private ComparisonModel _comparisonToAdd;
 		private int? _comparisonToReposition;
+		private Action<Action> _prepareForRestore;
 		
 		public HomeListViewController()
 		{
+		}
+		
+		public void PrepareForRestore(Action<Action> preparedCallback)
+		{
+			if(NavigationController.TopViewController == this)
+			{
+				FadeOutTable(preparedCallback);
+				return;
+			}
+			_prepareForRestore = preparedCallback;
 		}
 		
 		public void ReloadRowForComparison(int comparisonId)
@@ -105,13 +116,53 @@ namespace Cheapster.ViewControllers
 			_trashButton.Enabled = true;
 		}
 		
+		private void FadeInTable()
+		{
+			UIView.Animate(0.4, () => 
+			{ 
+				_tableView.Alpha = 1; 
+			}, () =>
+			{
+				_tableView.Opaque = true;
+			});
+		}
+		
+		private void FadeOutTable(Action<Action> callback)
+		{
+			_tableView.Opaque = false;
+			UIView.Animate(0.4, () => 
+			{ 
+				_tableView.Alpha = 0; 
+			}, () =>
+			{
+				if(callback != null)
+				{
+					callback(() =>
+					{
+						_tableView.Reset();
+						_tableView.ReloadData();
+						FadeInTable();
+					});
+				}
+			});
+		}
+		
 		public override void ViewDidAppear(bool animated)
 		{
+			Console.WriteLine("HomeListViewController ViewDidAppear");
 			base.ViewDidAppear(animated);
+			
+			if(_prepareForRestore != null)
+			{
+				FadeOutTable(_prepareForRestore);
+				_prepareForRestore = null;
+				return;
+			}
 			
 			if(!_tableView.Opaque)
 			{
-				UIView.Animate(0.4, () => { _tableView.Alpha = 1; }, () => { _tableView.Opaque = true; });
+				FadeInTable();
+				return;
 			}
 			
 			if(_comparisonToAdd != null)

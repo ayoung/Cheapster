@@ -21,8 +21,21 @@ namespace Cheapster.ViewControllers
 		private MFMailComposeViewController _emailController;
 		private const string _urlFormat = "itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id={0}";
 		
+		public void PrepareForRestore(Action<Action> preparedCallback)
+		{
+			_comparableViewController = null;
+			_comparisonViewController = null;
+			_comparisonLineupViewController = null;
+			_aboutNavigationController = null;
+			_aboutViewController = null;
+			_emailController = null;
+			_homeListViewController.PrepareForRestore(preparedCallback);
+			PopToRootViewController(true);
+		}
+		
 		public override void ViewDidLoad()
 		{
+			Console.WriteLine("HomeListNavigationController ViewDidLoad");
 			_homeListViewController = new HomeListViewController();
 			
 			NavigationBar.TintColor = UIColor.DarkGray;
@@ -159,18 +172,24 @@ namespace Cheapster.ViewControllers
 				_aboutViewController.OnBackupData += (sender_, args_) =>
 				{
 					var attachmentFileName = string.Format("CheapsterBackup_{0}.cdbk", DateTime.Now.ToString("yyyyMMdd"));
+					var success = false;
+					
+					if(!Directory.Exists(Configuration.TEMP_FOLDER))
+					{
+						Directory.CreateDirectory(Configuration.TEMP_FOLDER);
+					}
 					
 					// compress the database
 					var zipFile = new LibZipArchive.ZipArchive();
-					zipFile.CreateZipFile2(Configuration.DB_TEMP_BACKUP_PATH);
-					zipFile.AddFile(Configuration.DB_INSTALLED_PATH, Configuration.DB_FILENAME);
-					zipFile.CloseZipFile2();
+					success = zipFile.CreateZipFile2(Configuration.USER_DB_TEMP_BACKUP_PATH);
+					success = zipFile.AddFile(Configuration.USER_DB_INSTALLED_PATH, Configuration.USER_DB_FILENAME);
+					success = zipFile.CloseZipFile2();
 					
-					var fileData = NSData.FromFile(Configuration.DB_TEMP_BACKUP_PATH);
+					var fileData = NSData.FromFile(Configuration.USER_DB_TEMP_BACKUP_PATH);
 					_emailController = new MFMailComposeViewController();
 					_emailController.SetSubject(string.Format("Cheapster Data Backup {0}", DateTime.Now.ToShortDateString()));
+					_emailController.SetMessageBody("Here is your Cheapster data. \n\n To restore from this backup, open this email in the Mail app, touch the file and hold down until a menu appears with an option for \"Open in Cheapster\".", false);
 					_emailController.AddAttachmentData(fileData, "Cheapster/x-cdbk", attachmentFileName);
-					_emailController.Delegate = new MailComposeDelegate();
 					_emailController.Finished += (sender__, args__) =>
 					{
 						if(args__.Result == MFMailComposeResult.Sent)
@@ -203,15 +222,6 @@ namespace Cheapster.ViewControllers
 
 			PushViewController(_homeListViewController, true);
 			base.ViewDidLoad();
-		}
-		
-		private class MailComposeDelegate : MFMailComposeViewControllerDelegate
-		{
-			
-			public override void Finished(MFMailComposeViewController controller, MFMailComposeResult result, NSError error)
-			{
-				File.Delete(Configuration.DB_TEMP_BACKUP_PATH);
-			}
 		}
 	}
 }

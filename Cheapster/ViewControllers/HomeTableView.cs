@@ -81,7 +81,7 @@ namespace Cheapster.ViewControllers
 			}
 		}
 		
-		private void Reset()
+		public void Reset()
 		{
 			Comparisons = DataService.GetComparisons().OrderBy(c => c.Name).ToList();
 			SetScrollAndSelection();
