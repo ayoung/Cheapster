@@ -206,7 +206,7 @@ namespace Cheapster.ViewControllers
 				{
 					var url = string.Format(_urlFormat, "375611783");
 					//UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(url));
-					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString("http://itunes.apple.com"));
+					UIApplication.SharedApplication.OpenUrl(NSUrl.FromString("http://itunes.apple.com/us/app/cheapster/id426078800?mt=8&ls=1"));
 				};
 				_aboutViewController.OnTwitter += (sender__, args__) =>
 				{

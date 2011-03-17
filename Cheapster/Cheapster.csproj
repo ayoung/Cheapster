@@ -13,8 +13,6 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <BundleVersion>1.0</BundleVersion>
     <BundleDisplayName>Cheapster</BundleDisplayName>
-    <BundleIcon>Content\Icons\iPhone.png</BundleIcon>
-    <BundleIconHigh>Content\Icons\iPhone4.png</BundleIconHigh>
     <MainNibFileIPad>MainWindow.xib</MainNibFileIPad>
     <MtouchMinimumOS>3.2</MtouchMinimumOS>
     <AssemblyName>Cheapster</AssemblyName>
@@ -96,7 +94,7 @@
     <MtouchDebug>False</MtouchDebug>
     <CodesignKey>iPhone Distribution: Andrew Young</CodesignKey>
     <MtouchI18n />
-    <CodesignProvision>64F3EC5C-68A2-4B44-A5E0-4F1E5FE2AED2</CodesignProvision>
+    <CodesignProvision>D84568B9-CCE9-467D-A6CB-1AA6B1617CF9</CodesignProvision>
     <MtouchExtraArgs>-v -gcc_flags "-L${ProjectDir}/lib -lziparchive -lz.1.2.3 -framework Foundation -force_load ${ProjectDir}/lib/libziparchive.a"</MtouchExtraArgs>
     <MtouchUseLlvm>false</MtouchUseLlvm>
     <MtouchUseArmv7>false</MtouchUseArmv7>
@@ -117,8 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="Content\Icons\iPhone.png" />
-    <None Include="Content\Icons\iPhone4.png" />
     <None Include="lib\libziparchive.a" />
     <None Include="lib\monotouch-ziparchive.dll" />
     <None Include="Content\Database\AppData.sql" />
@@ -190,7 +186,6 @@
     <Folder Include="Data\Models\" />
     <Folder Include="ViewControllers\Shared\" />
     <Folder Include="Rules\" />
-    <Folder Include="Content\Icons\" />
     <Folder Include="lib\" />
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +220,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Database\AppData.db3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
