@@ -25,13 +25,16 @@ namespace Cheapster.ViewControllers.Comparable
 		private EventedTableViewCell _unitCell;
 		public event EventHandler OnEditUnit;
 		public event EventHandler OnKeyboardDone;
+		private UIViewController _controller;
+		private RecentStoresViewController _recentStoresViewController;
 		
-		public ComparableTableViewSource(ComparableTableView tableView) : this(tableView, null)
+		public ComparableTableViewSource(ComparableTableView tableView, UIViewController controller) : this(tableView, null, controller)
 		{
 		}
 		
-		public ComparableTableViewSource(ComparableTableView tableView, ComparableModel comparable)
+		public ComparableTableViewSource(ComparableTableView tableView, ComparableModel comparable, UIViewController controller)
 		{
+			_controller = controller;
 			_comparable = comparable;
 			_tableView = tableView;
 			TextFields = new List<UITextField>();
@@ -68,10 +71,12 @@ namespace Cheapster.ViewControllers.Comparable
 					if(_storeCell == null)
 					{
 						_storeCell = new EventedTableViewCell();
+						_storeCell.Accessory = UITableViewCellAccessory.DetailDisclosureButton;
 						AddLabel(_storeCell, "Store");
 						StoreText = AddTextField(_storeCell, "store name (optional)", indexPath, () => { return PriceText; });
 						StoreText.Text = _comparable == null ? null : _comparable.Store;
 						StoreText.AutocapitalizationType = UITextAutocapitalizationType.Words;
+						StoreText.Frame = new RectangleF(StoreText.Frame.X, StoreText.Frame.Y, StoreText.Frame.Width - 30, StoreText.Frame.Height);
 					}
 					return _storeCell;
 				case (2):
@@ -195,6 +200,20 @@ namespace Cheapster.ViewControllers.Comparable
 				
 				return true;
 			}
+		}
+		
+		public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
+		{
+			_recentStoresViewController = new RecentStoresViewController(s =>
+			{
+				StoreText.Text = s;
+				NSTimer.CreateScheduledTimer(0.3, () => 
+				{
+					_controller.NavigationController.PopViewControllerAnimated(true);
+				});
+
+			});
+			_controller.NavigationController.PushViewController(_recentStoresViewController, true);
 		}
 		
 		private class EventedTableViewCell : UITableViewCell

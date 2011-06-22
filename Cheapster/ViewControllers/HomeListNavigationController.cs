@@ -90,7 +90,8 @@ namespace Cheapster.ViewControllers
 						DismissModalViewControllerAnimated(true);
 						_comparableViewController = null;
 					};
-					PresentModalViewController(_comparableViewController, true);
+					var navController = new UINavigationController(_comparableViewController);
+					PresentModalViewController(navController, true);
 				};
 				
 				// edit comparable

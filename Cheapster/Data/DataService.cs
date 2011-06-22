@@ -294,6 +294,28 @@ namespace Cheapster.Data
 		
 		#endregion
 		
+		#region Store Names
+		
+		public static List<RecentStore> GetRecentStoreNames()
+		{
+			var stores = new List<RecentStore>();
+			var commandText = "select Store, max(ModifiedOn) as ModifiedOn, count(Store) as Count from Comparable group by Store;";
+			SqlConnection.ReaderWithCommand(commandText, (reader) =>
+			{
+				while(reader.Read()) {
+					stores.Add(new RecentStore() {
+						Name = reader.GetString(0),
+						LastModifiedOn = reader.GetDateTime(1),
+						UsedCount = reader.GetInt32(2)
+					});
+				}
+			});
+			
+			return stores;
+		} 
+		
+		#endregion
+		
 		#region Database
 		
 		public static double GetDbVersion(string pathToDb)

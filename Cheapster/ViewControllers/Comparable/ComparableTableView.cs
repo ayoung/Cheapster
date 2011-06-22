@@ -16,9 +16,9 @@ namespace Cheapster.ViewControllers.Comparable
 		public event EventHandler OnProductNameChanged;
 		private ComparableTableViewSource _tableViewSource;
 		
-		public ComparableTableView(RectangleF frame, UITableViewStyle style, ComparableModel comparable) : base(frame, style)
+		public ComparableTableView(RectangleF frame, UITableViewStyle style, ComparableModel comparable, UIViewController viewController) : base(frame, style)
 		{
-			_tableViewSource = new ComparableTableViewSource(this, comparable);
+			_tableViewSource = new ComparableTableViewSource(this, comparable, viewController);
 			_tableViewSource.OnEditUnit += (sender, args) =>
 			{
 				OnEditUnit.Fire(this, args);

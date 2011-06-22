@@ -47,21 +47,21 @@ namespace Cheapster.ViewControllers.Comparable
 			View.BackgroundColor = UIColor.White;
 			
 			// add tableview
-			_tableView = new ComparableTableView(new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - NavBarOffset()), UITableViewStyle.Grouped, Comparable);
+			_tableView = new ComparableTableView(new RectangleF(0, 0, View.Frame.Width, View.Frame.Height), UITableViewStyle.Grouped, Comparable, this);
 			_tableView.OnEditUnit += (sender, args) =>
 			{
 				_pickerVisible = true;
 				if(_keyboardVisible)
 				{
 					_unitPicker.Frame = new RectangleF(0, View.Frame.Height - _unitPicker.Frame.Height, View.Frame.Width, 216);
-					_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height - NavBarOffset());
+					_tableView.Frame = new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height);
 				}
 				else
 				{
 					UIView.Animate(0.3, () =>
 					{
 						_unitPicker.Frame = new RectangleF(0, View.Frame.Height - _unitPicker.Frame.Height, View.Frame.Width, 216);
-						_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height - NavBarOffset());
+						_tableView.Frame = new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - _unitPicker.Frame.Height);
 					}, () => {
 						_tableView.ScrollToActiveRow();
 					});
@@ -156,36 +156,25 @@ namespace Cheapster.ViewControllers.Comparable
 		
 		private void ConfigureNavigationBar()
 		{
+			_navigationItem = NavigationItem;
+
 			if(Comparable == null)
 			{
-				var navigationBar = new UINavigationBar(new RectangleF(0, 0, View.Frame.Width, NavBarOffset()));
-				_navigationItem = new UINavigationItem("Product");
+				Title = "Product";
 				var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (sender, args) =>
 				{
 					OnCanceled.Fire(this, EventArgs.Empty);
 				});
-	
+				
 				_navigationItem.SetRightBarButtonItem(GetDoneButton(), false);
 				_navigationItem.SetLeftBarButtonItem(cancelButton, false);
-				navigationBar.PushNavigationItem(_navigationItem, false);
-				View.AddSubview(navigationBar);
 			}
 			else
 			{
 				NavigationController.SetNavigationBarHidden(false, false);
 				NavigationItem.RightBarButtonItem = GetDoneButton();
-				_navigationItem = NavigationItem;
 				Title = string.IsNullOrEmpty(Comparable.Product) ? "Product" : Comparable.Product;
 			}
-		}
-		
-		private float NavBarOffset()
-		{
-			if(Comparable == null)
-			{
-				return 44;
-			}
-			return 0;
 		}
 		
 		public override void ViewWillAppear(bool animated)
@@ -214,7 +203,7 @@ namespace Cheapster.ViewControllers.Comparable
 				}
 
 				UIView.Animate(0.3, () => {
-					_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, View.Frame.Height - keyboardSize.Height - NavBarOffset());
+					_tableView.Frame = new RectangleF(0, 0, View.Frame.Width, View.Frame.Height - keyboardSize.Height);
 				}, () => {
 					_tableView.ScrollToActiveRow();
 				});
@@ -226,9 +215,9 @@ namespace Cheapster.ViewControllers.Comparable
 				{
 					return;
 				}
-				_tableView.Frame = new RectangleF(0, NavBarOffset() - _tableView.ContentOffset.Y, View.Frame.Width, View.Frame.Height - NavBarOffset());
+				_tableView.Frame = new RectangleF(0, _tableView.ContentOffset.Y, View.Frame.Width, View.Frame.Height);
 				UIView.Animate(0.3, () => {
-					_tableView.Frame = new RectangleF(0, NavBarOffset(), View.Frame.Width, _tableView.Frame.Height);
+					_tableView.Frame = new RectangleF(0, 0, View.Frame.Width, _tableView.Frame.Height);
 				}, null);
 			});
 		}
