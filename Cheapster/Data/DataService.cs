@@ -299,7 +299,7 @@ namespace Cheapster.Data
 		public static List<RecentStore> GetRecentStoreNames()
 		{
 			var stores = new List<RecentStore>();
-			var commandText = "select Store, max(ModifiedOn) as ModifiedOn, count(Store) as Count from Comparable group by Store;";
+			var commandText = "select Store, max(ModifiedOn) as ModifiedOn, count(Store) as Count from Comparable where Store is not null or Store <> '' group by Store;";
 			SqlConnection.ReaderWithCommand(commandText, (reader) =>
 			{
 				while(reader.Read()) {

@@ -11,7 +11,7 @@
     <RootNamespace>Cheapster</RootNamespace>
     <MainNibFile>MainWindow.xib</MainNibFile>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <BundleVersion>1.1</BundleVersion>
+    <BundleVersion>1.1.1</BundleVersion>
     <BundleDisplayName>Cheapster</BundleDisplayName>
     <MainNibFileIPad>MainWindow.xib</MainNibFileIPad>
     <MtouchMinimumOS>3.2</MtouchMinimumOS>
